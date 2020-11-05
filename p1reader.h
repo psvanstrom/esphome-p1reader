@@ -267,41 +267,40 @@ class P1Reader : public Component, public UARTDevice {
 
             // if we've reached the CRC checksum, calculate last CRC and compare
             if (buffer[0] == '!') {
-            crc = crc16_update(crc, buffer[0]);
-            int crcFromMsg = (int) strtol(&buffer[1], NULL, 16);
-            parsed.crcOk = crc == crcFromMsg;
-            ESP_LOGD("crc", "CRC: %04X = %04X. PASS = %s", crc, crcFromMsg, parsed.crcOk ? "YES": "NO");
+              crc = crc16_update(crc, buffer[0]);
+              int crcFromMsg = (int) strtol(&buffer[1], NULL, 16);
+              parsed.crcOk = crc == crcFromMsg;
+              ESP_LOGD("crc", "CRC: %04X = %04X. PASS = %s", crc, crcFromMsg, parsed.crcOk ? "YES": "NO");
 
             // otherwise pass the row through the CRC calculation
-          } else {
-            for (int i = 0; i < len + 1; i++) {
-              crc = crc16_update(crc, buffer[i]);
+            } else {
+              for (int i = 0; i < len + 1; i++) {
+                crc = crc16_update(crc, buffer[i]);
+              }
+            }
+
+            // if this is a row containing information
+            if (strchr(buffer, '(') != NULL) {
+              char* dataId = strtok(buffer, DELIMITERS);
+              char* obisCode = strtok(NULL, DELIMITERS);
+
+              // ...and this row is a data row, then parse row
+              if (strncmp(DATA_ID, dataId, strlen(DATA_ID)) == 0) {
+                char* value = strtok(NULL, DELIMITERS);
+                char* unit = strtok(NULL, DELIMITERS);
+                ESP_LOGD("data", "[%s]: %s %s", obisCode, value, unit);
+                parseRow(&parsed, obisCode, value);
+              }
             }
           }
-
-          // if this is a row containing information
-          if (strchr(buffer, '(') != NULL) {
-            char* dataId = strtok(buffer, DELIMITERS);
-            char* obisCode = strtok(NULL, DELIMITERS);
-
-            // ...and this row is a data row, then parse row
-            if (strncmp(DATA_ID, dataId, strlen(DATA_ID)) == 0) {
-              char* value = strtok(NULL, DELIMITERS);
-              char* unit = strtok(NULL, DELIMITERS);
-              ESP_LOGD("data", "[%s]: %s %s", obisCode, value, unit);
-              parseRow(&parsed, obisCode, value);
-            }
-          }
+          // clean buffer
+          memset(buffer, 0, BUF_SIZE - 1);
         }
-        // clean buffer
-        memset(buffer, 0, BUF_SIZE - 1);
-      }
 
-      // if the CRC pass, publish sensor values
-      if (parsed.crcOk) {
-        publishSensors(&parsed);
+        // if the CRC pass, publish sensor values
+        if (parsed.crcOk) {
+          publishSensors(&parsed);
+        }
       }
     }
-  }
-
 };
