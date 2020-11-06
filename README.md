@@ -18,7 +18,7 @@ To convert the 5V signal to 3.3V suitable for the RX pin on the microcontroller 
 ### Wiring
 The RTS (request to send) pin should be connected directly to 5V so that data is sent continously. The signals from the P1 port needs to be inverted, which is handled by the BC547 transistor.
 
-
+![Wiring Diagram](images/wiring.png)
 
 ## Technical documentation
 Specification overview:
