@@ -131,87 +131,6 @@ class P1Reader : public Component, public UARTDevice {
       return crc;
     }
 
-    void parseRow(ParsedMessage* parsed, char* obisCode, char* value) {
-      if (strncmp(obisCode, "1.8.0", 5) == 0) {
-        parsed->cumulativeActiveImport = atof(value);
-
-      } else if (strncmp(obisCode, "2.8.0", 5) == 0) {
-        parsed->cumulativeActiveExport = atof(value);
-
-      } else if (strncmp(obisCode, "3.8.0", 5) == 0) {
-        parsed->cumulativeReactiveImport = atof(value);
-
-      } else if (strncmp(obisCode, "4.8.0", 5) == 0) {
-        parsed->cumulativeReactiveExport = atof(value);
-
-      } else if (strncmp(obisCode, "1.7.0", 5) == 0) {
-        parsed->momentaryActiveImport = atof(value);
-
-      } else if (strncmp(obisCode, "2.7.0", 5) == 0) {
-        parsed->momentaryActiveExport = atof(value);
-
-      } else if (strncmp(obisCode, "3.7.0", 5) == 0) {
-        parsed->momentaryReactiveImport = atof(value);
-
-      } else if (strncmp(obisCode, "4.7.0", 5) == 0) {
-        parsed->momentaryReactiveExport = atof(value);
-
-      } else if (strncmp(obisCode, "21.7.0", 6) == 0) {
-        parsed->momentaryActiveImportL1 = atof(value);
-
-      } else if (strncmp(obisCode, "22.7.0", 6) == 0) {
-        parsed->momentaryActiveExportL1 = atof(value);
-
-      } else if (strncmp(obisCode, "41.7.0", 6) == 0) {
-        parsed->momentaryActiveImportL2 = atof(value);
-
-      } else if (strncmp(obisCode, "42.7.0", 6) == 0) {
-        parsed->momentaryActiveExportL2 = atof(value);
-
-      } else if (strncmp(obisCode, "61.7.0", 6) == 0) {
-        parsed->momentaryActiveImportL3 = atof(value);
-
-      } else if (strncmp(obisCode, "62.7.0", 6) == 0) {
-        parsed->momentaryActiveExportL3 = atof(value);
-
-      } else if (strncmp(obisCode, "23.7.0", 6) == 0) {
-        parsed->momentaryReactiveImportL1 = atof(value);
-
-      } else if (strncmp(obisCode, "24.7.0", 6) == 0) {
-        parsed->momentaryReactiveExportL1 = atof(value);
-
-      } else if (strncmp(obisCode, "43.7.0", 6) == 0) {
-        parsed->momentaryReactiveImportL2 = atof(value);
-
-      } else if (strncmp(obisCode, "44.7.0", 6) == 0) {
-        parsed->momentaryReactiveExportL2 = atof(value);
-
-      } else if (strncmp(obisCode, "63.7.0", 6) == 0) {
-        parsed->momentaryReactiveImportL3 = atof(value);
-
-      } else if (strncmp(obisCode, "64.7.0", 6) == 0) {
-        parsed->momentaryReactiveExportL3 = atof(value);
-
-      } else if (strncmp(obisCode, "32.7.0", 6) == 0) {
-        parsed->voltageL1 = atof(value);
-
-      } else if (strncmp(obisCode, "52.7.0", 6) == 0) {
-        parsed->voltageL2 = atof(value);
-
-      } else if (strncmp(obisCode, "72.7.0", 6) == 0) {
-        parsed->voltageL3 = atof(value);
-
-      } else if (strncmp(obisCode, "31.7.0", 6) == 0) {
-        parsed->currentL1 = atof(value);
-
-      } else if (strncmp(obisCode, "51.7.0", 6) == 0) {
-        parsed->currentL2 = atof(value);
-
-      } else if (strncmp(obisCode, "71.7.0", 6) == 0) {
-        parsed->currentL3 = atof(value);
-      }
-    }
-
     void publishSensors(ParsedMessage* parsed) {
       cumulativeActiveImport->publish_state(parsed->cumulativeActiveImport);
       cumulativeActiveExport->publish_state(parsed->cumulativeActiveExport);
@@ -237,11 +156,11 @@ class P1Reader : public Component, public UARTDevice {
       momentaryReactiveImportL1->publish_state(parsed->momentaryReactiveImportL1);
       momentaryReactiveExportL1->publish_state(parsed->momentaryReactiveExportL1);
 
-      momentaryReactiveImportL1->publish_state(parsed->momentaryReactiveImportL2);
-      momentaryReactiveExportL1->publish_state(parsed->momentaryReactiveExportL2);
+      momentaryReactiveImportL2->publish_state(parsed->momentaryReactiveImportL2);
+      momentaryReactiveExportL2->publish_state(parsed->momentaryReactiveExportL2);
 
-      momentaryReactiveImportL1->publish_state(parsed->momentaryReactiveImportL3);
-      momentaryReactiveExportL1->publish_state(parsed->momentaryReactiveExportL3);
+      momentaryReactiveImportL3->publish_state(parsed->momentaryReactiveImportL3);
+      momentaryReactiveExportL3->publish_state(parsed->momentaryReactiveExportL3);
 
       voltageL1->publish_state(parsed->voltageL1);
       voltageL2->publish_state(parsed->voltageL2);
