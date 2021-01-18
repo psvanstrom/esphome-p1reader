@@ -1,5 +1,10 @@
 # esphome-p1reader
-ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters but will probably work for any compliant P1 port.
+ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters that implements the specification defined in the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) version 1.3 and above.
+
+Please note that the project currently doesn't support the Aidon meter from Tekniska Verken since that meter outputs the data in a binary format according to an earlier version (1.2) of the above mentioned recommendation.
+
+## Verified meter hardware / supplier
+* [Sagemcom T211](https://www.ellevio.se/globalassets/uploads/2020/nya-elmatare/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio
 
 ## Hardware
 I have used an ESP-12 based NodeMCU for my circuit. Most ESP-12/ESP-32 based controllers would probably work. The P1 port on the meter provides 5V up to 250mA which makes it possible to power the circuit directly from the P1 port.
@@ -18,7 +23,7 @@ The circuit is very simple, basically the 5V TX output on the P1 connector is co
 ![Wiring Diagram](images/wiring.png)
 
 ## Installation
-Clone the repository and update the [p1reader.yaml](p1reader.yaml) with your own settings (wifi SSID and password and API password). 
+Clone the repository and update the [p1reader.yaml](p1reader.yaml) with your own settings (wifi SSID and password and API password).
 
 Prepare the microcontroller with ESPHome before you connect it to the circuit:
 - Install the `esphome` [command line tool](https://esphome.io/guides/getting_started_command_line.html)
