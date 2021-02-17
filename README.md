@@ -23,7 +23,17 @@ The circuit is very simple, basically the 5V TX output on the P1 connector is co
 ![Wiring Diagram](images/wiring.png)
 
 ## Installation
-Clone the repository and update the [p1reader.yaml](p1reader.yaml) with your own settings (wifi SSID and password and API password).
+Clone the repository and create a companion `secrets.yaml` file with the following fields:
+```
+wifi_ssid: <your wifi SSID>
+wifi_password: <your wifi password>
+fallback_password: <fallback AP password>
+hass_api_password: <the Home Assistant API password>
+ota_password: <The OTA password>
+```
+Make sure to place the `secrets.yaml` file in the root path of the cloned project. The `fallback_password` and `ota_password` fields can be set to any password before doing the initial upload of the firmware.
+
+
 
 Prepare the microcontroller with ESPHome before you connect it to the circuit:
 - Install the `esphome` [command line tool](https://esphome.io/guides/getting_started_command_line.html)
@@ -31,35 +41,39 @@ Prepare the microcontroller with ESPHome before you connect it to the circuit:
 - Remove the USB connection and connect the microcontroller to the rest of the circuit and plug it into the P1 port.
 - If everything works, your Home Assistant will now auto detect your new ESPHome integration.
 
-You can check the logs by issuing `esphome p1reader.yaml logs` (or use the super awesome ESPHome dashboard available as a Hass.io add-on or standalone). The logs should output data similar to this every 10 seconds:
+You can check the logs by issuing `esphome p1reader.yaml logs` (or use the super awesome ESPHome dashboard available as a Hass.io add-on or standalone). The logs should output data similar to this every 10 seconds when using `DEBUG` loglevel:
 ```
-[23:03:23][D][data:291]: [1.8.0]: 00001587.242 kWh
-[23:03:23][D][data:291]: [2.8.0]: 00000000.000 kWh
-[23:03:23][D][data:291]: [3.8.0]: 00000005.420 kvarh
-[23:03:23][D][data:291]: [4.8.0]: 00000269.077 kvarh
-[23:03:23][D][data:291]: [1.7.0]: 0000.702 kW
-[23:03:23][D][data:291]: [2.7.0]: 0000.000 kW
-[23:03:23][D][data:291]: [3.7.0]: 0000.041 kvar
-[23:03:23][D][data:291]: [4.7.0]: 0000.340 kvar
-[23:03:23][D][data:291]: [21.7.0]: 0000.351 kW
-[23:03:23][D][data:291]: [41.7.0]: 0000.187 kW
-[23:03:23][D][data:291]: [61.7.0]: 0000.163 kW
-[23:03:23][D][data:291]: [22.7.0]: 0000.000 kW
-[23:03:23][D][data:291]: [42.7.0]: 0000.000 kW
-[23:03:23][D][data:291]: [62.7.0]: 0000.000 kW
-[23:03:23][D][data:291]: [23.7.0]: 0000.000 kvar
-[23:03:23][D][data:291]: [43.7.0]: 0000.041 kvar
-[23:03:23][D][data:291]: [63.7.0]: 0000.000 kvar
-[23:03:23][D][data:291]: [24.7.0]: 0000.259 kvar
-[23:03:23][D][data:291]: [44.7.0]: 0000.000 kvar
-[23:03:23][D][data:291]: [64.7.0]: 0000.080 kvar
-[23:03:23][D][data:291]: [32.7.0]: 233.8 V
-[23:03:23][D][data:291]: [52.7.0]: 235.0 V
-[23:03:23][D][data:291]: [72.7.0]: 234.9 V
-[23:03:23][D][data:291]: [31.7.0]: 001.9 A
-[23:03:23][D][data:291]: [51.7.0]: 000.8 A
-[23:03:23][D][data:291]: [71.7.0]: 000.8 A
-[23:03:23][D][crc:273]: CRC: 27DE = 27DE. PASS = YES
+[18:40:01][D][data:264]: /ELL5\253833635_A
+[18:40:01][D][data:264]:
+[18:40:01][D][data:264]: 0-0:1.0.0(210217184019W)
+[18:40:01][D][data:264]: 1-0:1.8.0(00006678.394*kWh)
+[18:40:01][D][data:264]: 1-0:2.8.0(00000000.000*kWh)
+[18:40:01][D][data:264]: 1-0:3.8.0(00000021.988*kvarh)
+[18:40:01][D][data:264]: 1-0:4.8.0(00001020.971*kvarh)
+[18:40:01][D][data:264]: 1-0:1.7.0(0001.727*kW)
+[18:40:01][D][data:264]: 1-0:2.7.0(0000.000*kW)
+[18:40:01][D][data:264]: 1-0:3.7.0(0000.000*kvar)
+[18:40:01][D][data:264]: 1-0:4.7.0(0000.309*kvar)
+[18:40:01][D][data:264]: 1-0:21.7.0(0001.023*kW)
+[18:40:01][D][data:264]: 1-0:41.7.0(0000.350*kW)
+[18:40:01][D][data:264]: 1-0:61.7.0(0000.353*kW)
+[18:40:01][D][data:264]: 1-0:22.7.0(0000.000*kW)
+[18:40:01][D][data:264]: 1-0:42.7.0(0000.000*kW)
+[18:40:01][D][data:264]: 1-0:62.7.0(0000.000*kW)
+[18:40:01][D][data:264]: 1-0:23.7.0(0000.000*kvar)
+[18:40:01][D][data:264]: 1-0:43.7.0(0000.000*kvar)
+[18:40:01][D][data:264]: 1-0:63.7.0(0000.000*kvar)
+[18:40:01][D][data:264]: 1-0:24.7.0(0000.009*kvar)
+[18:40:01][D][data:264]: 1-0:44.7.0(0000.161*kvar)
+[18:40:01][D][data:264]: 1-0:64.7.0(0000.138*kvar)
+[18:40:01][D][data:264]: 1-0:32.7.0(240.3*V)
+[18:40:01][D][data:264]: 1-0:52.7.0(240.1*V)
+[18:40:01][D][data:264]: 1-0:72.7.0(241.3*V)
+[18:40:01][D][data:264]: 1-0:31.7.0(004.2*A)
+[18:40:01][D][data:264]: 1-0:51.7.0(001.6*A)
+[18:40:01][D][data:264]: 1-0:71.7.0(001.7*A)
+[18:40:01][D][data:264]: !7945
+[18:40:01][I][crc:275]: Telegram read. CRC: 7945 = 7945. PASS = YES
 ```
 
 The last row contains the CRC check. If you constantly get invalid CRC there might be something wrong with the serial communication.
