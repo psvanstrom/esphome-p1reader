@@ -6,14 +6,13 @@ esphome:
     - p1reader.h
 
 wifi:
-  ssid: <ssid>
-  password: <pwd>
-  use_address: <ip>
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
     ssid: "electricity_meter"
-    password: <pwd>
+    password: !secret fallback_password
 
 captive_portal:
 
@@ -24,10 +23,10 @@ logger:
   
 # Enable Home Assistant API
 api:
-  password: <pwd>
+  password: !secret hass_api_password
 
 ota:
-  password: <pwd>
+  password: !secret ota_password
 
 uart:
   id: uart_bus
