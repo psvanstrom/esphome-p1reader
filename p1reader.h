@@ -261,6 +261,8 @@ class P1Reader : public Component, public UARTDevice {
           int len = readBytesUntil('\n', buffer, BUF_SIZE);
 
           if (len > 0) {
+          	ESP_LOGD("data", "%s", buffer);
+
             // put newline back as it is required for CRC calculation
             buffer[len] = '\n';
             buffer[len + 1] = '\0';
@@ -270,7 +272,7 @@ class P1Reader : public Component, public UARTDevice {
               crc = crc16_update(crc, buffer[0]);
               int crcFromMsg = (int) strtol(&buffer[1], NULL, 16);
               parsed.crcOk = crc == crcFromMsg;
-              ESP_LOGD("crc", "CRC: %04X = %04X. PASS = %s", crc, crcFromMsg, parsed.crcOk ? "YES": "NO");
+              ESP_LOGI("crc", "Telegram read. CRC: %04X = %04X. PASS = %s", crc, crcFromMsg, parsed.crcOk ? "YES": "NO");
 
             // otherwise pass the row through the CRC calculation
             } else {
@@ -288,7 +290,6 @@ class P1Reader : public Component, public UARTDevice {
               if (strncmp(DATA_ID, dataId, strlen(DATA_ID)) == 0) {
                 char* value = strtok(NULL, DELIMITERS);
                 char* unit = strtok(NULL, DELIMITERS);
-                ESP_LOGD("data", "[%s]: %s %s", obisCode, value, unit);
                 parseRow(&parsed, obisCode, value);
               }
             }
