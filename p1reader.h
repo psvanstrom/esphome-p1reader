@@ -301,7 +301,7 @@ class P1Reader : public Component, public UARTDevice {
         
           if (!telegramEnded && !available()) {
           	// wait for more data
-          	delay(2000);
+          	delay(40);
           }
         }
 
