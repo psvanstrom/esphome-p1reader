@@ -71,9 +71,15 @@ sensor:
   - name: "Cumulative Active Import"
     unit_of_measurement: kWh
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "energy"
+    last_reset_type: "never"
   - name: "Cumulative Active Export"
     unit_of_measurement: kWh
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "energy"
+    last_reset_type: "never"
   - name: "Cumulative Reactive Import"
     unit_of_measurement: kvarh
     accuracy_decimals: 3
