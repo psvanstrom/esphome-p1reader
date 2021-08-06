@@ -25,6 +25,11 @@ The circuit is very simple, basically the 5V TX output on the P1 connector is co
 
 ![Wiring Diagram](images/wiring.png)
 
+### PCB
+[Naesstrom](https://github.com/Naesstrom) has made a nice PCB layout for the P1 reader using a Wemos D1 mini as the controller. Check it out here: https://oshwlab.com/Naesstrom/esphome-p1reader
+
+![image](https://user-images.githubusercontent.com/5547521/128576100-648cd2b7-d728-4d8b-90be-46f7498d8136.png)
+
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
 ```
