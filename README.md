@@ -10,10 +10,10 @@ Please note that the project currently doesn't support the Aidon meter from Tekn
 *Note:* There's currently a bug in the E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
 
 ## Hardware
-I have used an ESP-12 based NodeMCU for my circuit. Most ESP-12/ESP-32 based controllers would probably work. The P1 port on the meter provides 5V up to 250mA which makes it possible to power the circuit directly from the P1 port.
+I have used an ESP-12 based NodeMCU for my circuit, another alternative is the cheaper Wemos D1 mini but most ESP-based controllers would probably work. The P1 port on the meter provides 5V up to 250mA which makes it possible to power the circuit directly from the P1 port.
 
 ### Parts
-- 1 NodeMCU or equivalent ESP-12 / ESP-32 microcontroller
+- 1 NodeMCU, Wemos D1 mini or equivalent ESP-12 / ESP-32 microcontroller
 - 1 BC547 NPN transistor
 - 1 4.7kOhm Resistor
 - 1 10kOhm Resistor
@@ -23,12 +23,22 @@ I have used an ESP-12 based NodeMCU for my circuit. Most ESP-12/ESP-32 based con
 ### Wiring
 The circuit is very simple, basically the 5V TX output on the P1 connector is converted to 3.3V and inverted by the transistor and connected to the UART0 RX pin on the microcontroller. The RTS (request to send) pin is pulled high so that data is sent continously and GND and 5V is taken from the P1 connector to drive the microcontroller.
 
+#### Wiring NodeMCU ESP-12
 ![Wiring Diagram](images/wiring.png)
 
-### PCB
-[Naesstrom](https://github.com/Naesstrom) has made a nice PCB layout for the P1 reader using a Wemos D1 mini as the controller. Check it out here: https://oshwlab.com/Naesstrom/esphome-p1reader
+#### Wiring Wemos D1 mini
+![image](https://user-images.githubusercontent.com/5547521/132756141-53941ed7-64f6-4c83-b0b0-6fc7c9634752.png)
 
-![image](https://user-images.githubusercontent.com/5547521/128576100-648cd2b7-d728-4d8b-90be-46f7498d8136.png)
+
+### PCB
+[Naesstrom](https://github.com/Naesstrom) has made a nice PCB layout for the P1 reader using a Wemos D1 mini as the controller. Check it out here: https://oshwlab.com/Naesstrom/esphome-p1reader.
+
+<img src="https://user-images.githubusercontent.com/5547521/128576100-648cd2b7-d728-4d8b-90be-46f7498d8136.png" width="200" height="374">
+
+### Enclosure
+[Naesstrom](https://github.com/Naesstrom) has also created a very nice enclosure to be 3D-printed which can be found here: https://www.thingiverse.com/thing:4961372.
+
+![image](https://user-images.githubusercontent.com/5547521/132759466-f92bf190-ebaa-401d-bb54-330df5ba3ae0.png)
 
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
