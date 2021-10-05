@@ -1,5 +1,5 @@
 esphome:
-  name: electricity_meter
+  name: esp-p1reader
   platform: ESP8266
   board: nodemcu
   includes:
@@ -11,7 +11,7 @@ wifi:
 
   # Enable fallback hotspot (captive portal) in case wifi connection fails
   ap:
-    ssid: "electricity_meter"
+    ssid: "esp-p1reader"
     password: !secret fallback_password
 
 captive_portal:
