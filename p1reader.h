@@ -259,7 +259,7 @@ class P1Reader : public Component, public UARTDevice {
         bool telegramEnded = false;
 
         while (available()) {
-          int len = readBytesUntil('\n', buffer, BUF_SIZE);
+          int len = Serial.readBytesUntil('\n', buffer, BUF_SIZE);
 
           if (len > 0) {
           	ESP_LOGD("data", "%s", buffer);
@@ -301,7 +301,7 @@ class P1Reader : public Component, public UARTDevice {
         
           if (!telegramEnded && !available()) {
           	// wait for more data
-          	delay(40);
+          	esphome::delay(40);
           }
         }
 
