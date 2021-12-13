@@ -43,6 +43,31 @@ The circuit is very simple, basically the 5V TX output on the P1 connector is co
 
 ![image](https://user-images.githubusercontent.com/5547521/132759466-f92bf190-ebaa-401d-bb54-330df5ba3ae0.png)
 
+## Optional hardware
+Weigu has designed [SmartyReader P1](http://weigu.lu/microcontroller/smartyReader_P1/index.html) that also can be running with this code and configuration with a few small adaptions.
+
+This hardware runs on ESP8266 Wemos D1 mini pro but with less components.
+
+### Basic steps to run this code on SmartyReader P1:
+
+1. Set the board to Wemos D1 mini pro
+```
+board: d1_mini_pro
+```
+
+2. Adjust the UART section to invert the RX pin (removed TX pin config since it is not used).
+```
+uart:
+    id: uart_bus
+    rx_pin:
+      number: 3
+      inverted: true
+    baud_rate: 115200
+```
+
+_Note that the inverted flag is only supported in ESPHome beta as of now._  
+_Monitor [this PR](https://github.com/esphome/esphome/pull/1727) to follow if it is released to general version._
+
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
 ```
