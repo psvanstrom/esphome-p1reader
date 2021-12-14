@@ -20,7 +20,7 @@
 
 #include "esphome.h"
 
-#define BUF_SIZE 50
+#define BUF_SIZE 60
 
 class ParsedMessage {
   public:
