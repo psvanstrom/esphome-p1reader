@@ -9,6 +9,7 @@ The current version in main is tested with ESPHome version `2021.10.3`. Make sur
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/uploads/2020/nya-elmatare/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio
 * [Landis+Gyr E360](https://eu.landisgyr.com/blog-se/e360-en-smart-matare-som-optimerarden-totala-agandekostnaden)
+* Itron A300
 
 *Note:* There's currently a bug in the E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
 
@@ -17,7 +18,7 @@ I have used an ESP-12 based NodeMCU for my circuit, another alternative is the c
 
 ### Parts
 - 1 NodeMCU, Wemos D1 mini or equivalent ESP-12 / ESP-32 microcontroller
-- 1 BC547 NPN transistor
+- 1 BC547 / 2N3904 NPN transistor
 - 1 4.7kOhm Resistor
 - 1 10kOhm Resistor
 - 1 RJ12 6P6C port
