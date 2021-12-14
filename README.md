@@ -4,12 +4,13 @@ ESPHome custom component for reading P1 data from electricity meters. Designed f
 Please note that the project currently doesn't support the Aidon meter from Tekniska Verken since that meter outputs the data in a binary format according to an earlier version (1.2) of the above mentioned recommendation.
 
 ## ESPHome version
-The current version in main is tested with ESPHome version `2021.10.3`. Make sure your ESPHome version is up to date if you experience compile problems.
+The current version in main is tested with ESPHome version `2021.12.0`. Make sure your ESPHome version is up to date if you experience compile problems.
 
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/uploads/2020/nya-elmatare/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio
 * [Landis+Gyr E360](https://eu.landisgyr.com/blog-se/e360-en-smart-matare-som-optimerarden-totala-agandekostnaden)
-* Itron A300
+* [Itron A300](https://boraselnat.se/elnat/elmatarbyte-2020-2021/sa-har-fungerar-din-nya-elmatare/) / Borås Elnät
+* [S34U18 (Sanxing SX631)](https://www.vattenfalleldistribution.se/matarbyte/nya-elmataren/) / Vattenfall 
 
 *Note:* There's currently a bug in the E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
 
@@ -32,7 +33,6 @@ The circuit is very simple, basically the 5V TX output on the P1 connector is co
 
 #### Wiring Wemos D1 mini
 ![image](https://user-images.githubusercontent.com/5547521/132756141-53941ed7-64f6-4c83-b0b0-6fc7c9634752.png)
-
 
 ### PCB
 [Naesstrom](https://github.com/Naesstrom) has made a nice PCB layout for the P1 reader using a Wemos D1 mini as the controller. Check it out here: https://oshwlab.com/Naesstrom/esphome-p1reader.
