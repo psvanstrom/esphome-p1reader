@@ -11,6 +11,7 @@ The current version in main is tested with ESPHome version `2021.12.0`. Make sur
 * [Landis+Gyr E360](https://eu.landisgyr.com/blog-se/e360-en-smart-matare-som-optimerarden-totala-agandekostnaden)
 * [Itron A300](https://boraselnat.se/elnat/elmatarbyte-2020-2021/sa-har-fungerar-din-nya-elmatare/) / Borås Elnät
 * [S34U18 (Sanxing SX631)](https://www.vattenfalleldistribution.se/matarbyte/nya-elmataren/) / Vattenfall 
+* [KAIFA MA304H4E](https://reko.nackaenergi.se/elmatarbyte/) / Nacka Energi
 
 *Note:* There's currently a bug in the E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
 
