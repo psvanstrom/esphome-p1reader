@@ -67,8 +67,9 @@ uart:
     baud_rate: 115200
 ```
 
-_Note that the inverted flag is only supported in ESPHome beta as of now._  
-_Monitor [this PR](https://github.com/esphome/esphome/pull/1727) to follow if it is released to general version._
+~~Note that the inverted flag is only supported in ESPHome beta as of now.~~
+~~Monitor [this PR](https://github.com/esphome/esphome/pull/1727) to follow if it is released to general version.~~
+_inverted flag feature has been added in ESPHome 2021.12.0 released on 11th December 2021._
 
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
