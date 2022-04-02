@@ -36,15 +36,23 @@ The circuit is very simple, basically the 5V TX output on the P1 connector is co
 #### Wiring Wemos D1 mini
 ![image](https://user-images.githubusercontent.com/5547521/132756141-53941ed7-64f6-4c83-b0b0-6fc7c9634752.png)
 
-### PCB
-[Naesstrom](https://github.com/Naesstrom) has made a nice PCB layout for the P1 reader using a Wemos D1 mini as the controller. Check it out here: https://oshwlab.com/Naesstrom/esphome-p1reader.
+### PCB and enclosures
+#### Naesstrom
+[Naesstrom](https://github.com/Naesstrom) has made a nice PCB layout for the P1 reader using a Wemos D1 mini as the controller along with a 3D printable enclosure. 
 
-<img src="https://user-images.githubusercontent.com/5547521/128576100-648cd2b7-d728-4d8b-90be-46f7498d8136.png" width="200" height="374">
+Check out the PCB here: https://oshwlab.com/Naesstrom/esphome-p1reader and the enclosure here: https://www.thingiverse.com/thing:4961372.
 
-### Enclosure
-[Naesstrom](https://github.com/Naesstrom) has also created a very nice enclosure to be 3D-printed which can be found here: https://www.thingiverse.com/thing:4961372.
+<p float="left">
+    <img src="https://user-images.githubusercontent.com/5547521/128576100-648cd2b7-d728-4d8b-90be-46f7498d8136.png" height="300" />
+    <img src="https://user-images.githubusercontent.com/5547521/132759466-f92bf190-ebaa-401d-bb54-330df5ba3ae0.png" height="300" /> 
+</p>
 
-![image](https://user-images.githubusercontent.com/5547521/132759466-f92bf190-ebaa-401d-bb54-330df5ba3ae0.png)
+#### EHjortberg
+[EHjortberg](https://github.com/ehjortberg) has made an equally nice PCB layout based on an ESP07 module along with a 3D printable enclosure. Check it out here: https://github.com/ehjortberg/kicad-p1-port-thingie.
+
+<p float="left">
+  <img src="https://github.com/ehjortberg/kicad-p1-port-thingie/raw/master/images/p1-port-thingie-photo.jpg" width="400">
+</p>
 
 ## Optional hardware
 Weigu has designed [SmartyReader P1](http://weigu.lu/microcontroller/smartyReader_P1/index.html) that also can be running with this code and configuration with a few small adaptions.
