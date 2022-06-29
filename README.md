@@ -30,14 +30,14 @@ I have used an ESP-12 based NodeMCU for my circuit, another alternative is the c
 ### Wiring
 The circuit is very simple, basically the 5V TX output on the P1 connector is converted to 3.3V and inverted by the transistor and connected to the UART0 RX pin on the microcontroller. The RTS (request to send) pin is pulled high so that data is sent continously and GND and 5V is taken from the P1 connector to drive the microcontroller.
 
-#### Wiring barebone ESP-12 with added voltage regulators and capacitors
-![Wiring Diagram](images/p1reader-barebone-ESP-12F.png)
-
 #### Wiring NodeMCU ESP-12
 ![Wiring Diagram](images/wiring.png)
 
 #### Wiring Wemos D1 mini
 ![image](https://user-images.githubusercontent.com/5547521/132756141-53941ed7-64f6-4c83-b0b0-6fc7c9634752.png)
+
+#### Wiring barebone ESP-12 with added voltage regulators and capacitors. The schematics show a 2SC1815 NPN transistor being used (because that's what I had laying around), will work just fine with either one of the transistors listed under the parts section. 
+![Wiring Diagram](images/p1reader-barebone-ESP-12F.png)
 
 ### PCB and enclosures
 #### Naesstrom
