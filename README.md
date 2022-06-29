@@ -30,6 +30,9 @@ I have used an ESP-12 based NodeMCU for my circuit, another alternative is the c
 ### Wiring
 The circuit is very simple, basically the 5V TX output on the P1 connector is converted to 3.3V and inverted by the transistor and connected to the UART0 RX pin on the microcontroller. The RTS (request to send) pin is pulled high so that data is sent continously and GND and 5V is taken from the P1 connector to drive the microcontroller.
 
+#### Wiring barebone ESP-12 with added voltage regulators and capacitors
+![Wiring Diagram](images/p1reader barebone ESP-12F.png)
+
 #### Wiring NodeMCU ESP-12
 ![Wiring Diagram](images/wiring.png)
 
