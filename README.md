@@ -15,6 +15,8 @@ The current version in main is tested with ESPHome version `2022.3.0`. Make sure
 * [KAIFA CL109](https://www.oresundskraft.se/dags-for-matarbyte/) / Öresundskraft
 
 *Note:* There's currently a bug in the E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
+  
+*Warning:*  Do not confuse KAIFA MA304H4**E** with MA304H4**D** as the latter uses M-Bus instead of P1. Apart from being incompatible protocols, M-Bus pin 1 exerts 27V instead of 5V and will fry your P1 equipment.
 
 ## Hardware
 I have used an ESP-12 based NodeMCU for my circuit, another alternative is the cheaper Wemos D1 mini but most ESP-based controllers would probably work. The P1 port on the meter provides 5V up to 250mA which makes it possible to power the circuit directly from the P1 port.
