@@ -87,9 +87,7 @@ _inverted flag feature has been added in ESPHome 2021.12.0 released on 11th Dece
 
 ### Running on ESP32
 
-The ESP32 requires an external power supply.
-
-Using the hardware UART on GPIO3 is required.
+The ESP32 requires an external power supply since it cannot be powered by the low amperage available from the P1-port itself. Using the hardware UART on GPIO3 is required.
 
 Use a pull-up resistor (1k) from RXD to 3V3.
 
@@ -104,7 +102,7 @@ uart:
 
 ![image](https://user-images.githubusercontent.com/36197/199937760-c6dce355-1e69-4b78-ae04-e2f6c9b2241e.png)
 
-https://github.com/Josverl/micropython-p1meter
+Image credit: https://github.com/Josverl/micropython-p1meter
 
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
