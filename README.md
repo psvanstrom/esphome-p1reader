@@ -121,7 +121,7 @@ Make sure to place the `secrets.yaml` file in the root path of the cloned projec
 
 Prepare the microcontroller with ESPHome before you connect it to the circuit:
 - Install the `esphome` [command line tool](https://esphome.io/guides/getting_started_command_line.html)
-- Plug in the microcontroller to your USB port and run `esphome p1reader.yaml run` to flash the firmware
+- Plug in the microcontroller to your USB port and run `esphome run p1reader.yaml` to flash the firmware
 - Remove the USB connection and connect the microcontroller to the rest of the circuit and plug it into the P1 port.
 - If everything works, your Home Assistant will now auto detect your new ESPHome integration.
 
