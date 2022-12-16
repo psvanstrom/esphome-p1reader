@@ -87,9 +87,13 @@ sensor:
   - name: "Momentary Active Import"
     unit_of_measurement: kW
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "power"
   - name: "Momentary Active Export"
     unit_of_measurement: kW
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "power"
   - name: "Momentary Reactive Import"
     unit_of_measurement: kvar
     accuracy_decimals: 3
@@ -99,21 +103,33 @@ sensor:
   - name: "Momentary Active Import Phase 1"
     unit_of_measurement: kW
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "power"
   - name: "Momentary Active Export Phase 1"
     unit_of_measurement: kW
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "power"
   - name: "Momentary Active Import Phase 2"
     unit_of_measurement: kW
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "power"
   - name: "Momentary Active Export Phase 2"
     unit_of_measurement: kW
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "power"
   - name: "Momentary Active Import Phase 3"
     unit_of_measurement: kW
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "power"
   - name: "Momentary Active Export Phase 3"
     unit_of_measurement: kW
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "power"
   - name: "Momentary Reactive Import Phase 1"
     unit_of_measurement: kvar
     accuracy_decimals: 3
@@ -135,18 +151,30 @@ sensor:
   - name: "Voltage Phase 1"
     unit_of_measurement: V
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "voltage"
   - name: "Voltage Phase 2"
     unit_of_measurement: V
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "voltage"
   - name: "Voltage Phase 3"
     unit_of_measurement: V
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "voltage"
   - name: "Current Phase 1"
     unit_of_measurement: A
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "current"
   - name: "Current Phase 2"
     unit_of_measurement: A
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "current"
   - name: "Current Phase 3"
     unit_of_measurement: A
     accuracy_decimals: 3
+    state_class: "measurement"
+    device_class: "current"
