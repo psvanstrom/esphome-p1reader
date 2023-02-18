@@ -110,9 +110,11 @@ Clone the repository and create a companion `secrets.yaml` file with the followi
 wifi_ssid: <your wifi SSID>
 wifi_password: <your wifi password>
 fallback_password: <fallback AP password>
-hass_api_password: <the Home Assistant API password>
+encryption_key: the encryption key shared with HA
 ota_password: <The OTA password>
 ```
+Check [the Native API Component chapter of the ESPHome documentation](https://esphome.io/components/api.html#configuration-variables) for more info on the encryption key, this page also let you easily generate an encryption key.
+
 Make sure to place the `secrets.yaml` file in the root path of the cloned project. The `fallback_password` and `ota_password` fields can be set to any password before doing the initial upload of the firmware.
 
 
