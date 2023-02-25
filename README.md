@@ -13,7 +13,7 @@ The current version in main is tested with ESPHome version `2022.12.1`. Make sur
 * [KAIFA CL109](https://www.oresundskraft.se/dags-for-matarbyte/) / Öresundskraft
 * [Aidon](https://www.tekniskaverken.se/kundservice/dinamatare/snart-far-du-nya-matare/) / Tekniska Verken
 
-*Note:* There's currently a bug in the E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
+*Note:* There's a bug in older E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
   
 *Warning:*  Do not confuse KAIFA MA304H4**E** with MA304H4**D** as the latter uses M-Bus instead of P1. Apart from being incompatible protocols, M-Bus pin 1 exerts 27V instead of 5V and will fry your P1 equipment.
 
@@ -59,31 +59,11 @@ Check out the PCB here: https://oshwlab.com/Naesstrom/esphome-p1reader and the e
   <img src="https://github.com/ehjortberg/kicad-p1-port-thingie/raw/master/images/p1-port-thingie-photo.jpg" width="400">
 </p>
 
-## Optional hardware
-Weigu has designed [SmartyReader P1](http://weigu.lu/microcontroller/smartyReader_P1/index.html) that also can be running with this code and configuration with a few small adaptions.
+## Alternate hardware
 
-This hardware runs on ESP8266 Wemos D1 mini pro but with less components.
+Since most of the actual specification is, for all practical purposes, identical across Europe/EU (with the exception of Norway) we can use many kinds of different hardware that supports ESPHome and can interface with the P1 port. Both other custom made solutions and some commercial options. The key to using them is to combine them with the code here that handles the Swedish selection of data values sent from the smart meter. The DSMR module in ESPHome follows the Dutch specification for values to be used.
 
-### Basic steps to run this code on SmartyReader P1:
-
-1. Set the board to Wemos D1 mini pro
-```
-board: d1_mini_pro
-```
-
-2. Adjust the UART section to invert the RX pin (removed TX pin config since it is not used).
-```
-uart:
-    id: uart_bus
-    rx_pin:
-      number: 3
-      inverted: true
-    baud_rate: 115200
-```
-
-~~Note that the inverted flag is only supported in ESPHome beta as of now.~~
-~~Monitor [this PR](https://github.com/esphome/esphome/pull/1727) to follow if it is released to general version.~~
-_inverted flag feature has been added in ESPHome 2021.12.0 released on 11th December 2021._
+(Finland and Denmark seems to have the exact same configuration as Sweden)
 
 ### Running on ESP32
 
@@ -104,6 +84,57 @@ uart:
 
 Image credit: https://github.com/Josverl/micropython-p1meter
 
+### Running on SmartyReader P1
+
+Weigu has designed [SmartyReader P1](http://weigu.lu/microcontroller/smartyReader_P1/index.html) that also can be running with this code and configuration with a few small adaptions.
+
+This hardware runs on ESP8266 Wemos D1 mini pro but with less components.
+
+#### Basic steps to run this code on SmartyReader P1:
+
+1. Set the board to Wemos D1 mini pro
+```
+board: d1_mini_pro
+```
+
+2. Adjust the UART section to invert the RX pin (removed TX pin config since it is not used).
+```
+uart:
+    id: uart_bus
+    rx_pin:
+      number: 3
+      inverted: true
+    baud_rate: 115200
+```
+
+~~Note that the inverted flag is only supported in ESPHome beta as of now.~~
+~~Monitor [this PR](https://github.com/esphome/esphome/pull/1727) to follow if it is released to general version.~~
+_inverted flag feature has been added in ESPHome 2021.12.0 released on 11th December 2021._
+
+### Running on Slimmelezer(+)
+
+Marcel Zuidwijk has designed [Slimmelezer+](https://www.zuidwijk.com/product/slimmelezer-plus/) that also can be used with this code and combined with the standard configuration for the Slimmelezer+. (Also the non + version works fine, the software is compatible).
+
+It is designed as a custom board with a P1 interface that is software equivalent with the Wemos D1 Mini.
+
+#### Basic steps to run this code on the Slimmelezer+:
+
+1. Set the board to Wemos D1 mini
+```
+board: d1_mini
+```
+
+2. Adjust the UART section to set the rx_pin used by the Slimmelezer
+```
+uart:
+    id: uart_bus
+    baud_rate: 115200
+    rx_pin: D7
+    rx_buffer_size: 1700    
+```
+
+[Sample configuration](samples/slimmeleezer.yaml), uses !secret for all site specific configuration, see below.
+
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
 ```
@@ -116,8 +147,6 @@ ota_password: <The OTA password>
 Check [the Native API Component chapter of the ESPHome documentation](https://esphome.io/components/api.html#configuration-variables) for more info on the encryption key, this page also let you easily generate an encryption key.
 
 Make sure to place the `secrets.yaml` file in the root path of the cloned project. The `fallback_password` and `ota_password` fields can be set to any password before doing the initial upload of the firmware.
-
-
 
 Prepare the microcontroller with ESPHome before you connect it to the circuit:
 - Install the `esphome` [command line tool](https://esphome.io/guides/getting_started_command_line.html)
@@ -171,3 +200,19 @@ https://tech.enectiva.cz/en/installation-instructions/others/obis-codes-meaning/
 
 P1 hardware info (in Dutch):
 http://domoticx.com/p1-poort-slimme-meter-hardware/
+
+Original Dutch specification (P1 Companion Standard - DSMR 5.0.2)
+https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
+
+Luxembourg specification (E-Meter P1 Specification 1.1.2)
+https://www.luxmetering.lu/pdf/SPEC%20-%20E-Meter_P1_specification_20210308.pdf
+
+Belgian specification
+https://www.fluvius.be/sites/fluvius/files/2020-03/1901-fluvius-technical-specification-user-ports-digital-meter.pdf
+https://www.fluvius.be/sites/fluvius/files/2019-12/e-mucs_h_ed_1_3.pdf
+
+Swedish specification (Branschrekommendation för lokalt
+kundgränssnitt för elmätare 2.0)
+https://www.energiforetagen.se/globalassets/energiforetagen/det-erbjuder-vi/kurser-och-konferenser/elnat/branschrekommendation-lokalt-granssnitt-v2_0-201912.pdf
+
+
