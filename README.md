@@ -133,7 +133,7 @@ uart:
     rx_buffer_size: 1700    
 ```
 
-[Sample configuration](samples/slimmeleezer.yaml), uses !secret for all site specific configuration, see below.
+[Sample configuration](./samples/slimmelezer.yaml), uses !secret for all site specific configuration, see below.
 
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
