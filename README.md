@@ -137,6 +137,17 @@ uart:
 
 ## Installation
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
+
+If your electricity supplier is using Aidon 6442SE or Aidon 653X, you might also need to change the instantiation of the meter_sensor.
+As these meters are sometimes using the HDLC-protocol instead of ASCII. Open [p1reader.yaml](./p1reader.yaml)
+```c
+// Change
+auto meter_sensor = new P1Reader(id(uart_bus));
+// To
+auto meter_sensor = new P1ReaderHDLC(id(uart_bus));
+```
+
+Create a companion `secrets.yaml` file with the following fields:
 ```
 wifi_ssid: <your wifi SSID>
 wifi_password: <your wifi password>
