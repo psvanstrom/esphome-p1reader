@@ -34,7 +34,13 @@ uart:
   tx_pin: TX
   rx_pin: RX
   baud_rate: 115200
-  
+
+# If your electricity meter is an Aidon, which use the older
+# Branschstandard (1.2) where the data is HDLC-formatted
+# Change the first line after lambda to
+# auto_meter_sensor = new P1ReaderHDLC(id(uart_bus));
+# else
+# auto meter_sensor = new P1Reader(id(uart_bus));
 sensor:
 - platform: custom
   lambda: |-
