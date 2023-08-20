@@ -3,6 +3,8 @@ esphome:
   platform: ESP8266
   board: nodemcu
   includes:
+    - parsed_message.h
+    - p1reader_base.h
     - p1reader.h
 
 wifi:
@@ -18,8 +20,9 @@ captive_portal:
 
 # Enable logging
 logger:
-  level: DEBUG
-  baud_rate: 0 # disable logging over uart
+  level: INFO  # Logging costs performnce, swithc to DEBUG when needed
+  baud_rate: 0 # disable logging over uart (would use up a HW uart)
+  esp8266_store_log_strings_in_flash: false # Avoid flash wear and tear
   
 # Enable Home Assistant API
 api:
@@ -34,6 +37,7 @@ uart:
   tx_pin: TX
   rx_pin: RX
   baud_rate: 115200
+  rx_buffer_size: 3072    # Buffer size controls polling frequency
 
 # If your electricity meter is an Aidon, which use the older
 # Branschstandard (1.2) where the data is HDLC-formatted
