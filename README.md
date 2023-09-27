@@ -203,27 +203,31 @@ You can check the logs by issuing `esphome p1reader.yaml logs` (or use the super
 The last row contains the CRC check. If you constantly get invalid CRC there might be something wrong with the serial communication.
 
 ## Technical documentation
-Specification overview:
+- Specification overview:
 https://www.tekniskaverken.se/siteassets/tekniska-verken/elnat/aidonfd-rj12-han-interface-se-v13a.cleaned.pdf
 
-OBIS codes:
+- OBIS codes:
 https://tech.enectiva.cz/en/installation-instructions/others/obis-codes-meaning/
 
-P1 hardware info (in Dutch):
+- P1 hardware info (in Dutch):
 http://domoticx.com/p1-poort-slimme-meter-hardware/
 
-Original Dutch specification (P1 Companion Standard - DSMR 5.0.2)
+- Original Dutch specification (P1 Companion Standard - DSMR 5.0.2).
 https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
 
-Luxembourg specification (E-Meter P1 Specification 1.1.2)
+- Luxembourg specification (E-Meter P1 Specification 1.1.2)
 https://www.luxmetering.lu/pdf/SPEC%20-%20E-Meter_P1_specification_20210308.pdf
 
-Belgian specification
+- Belgian specification
 https://www.fluvius.be/sites/fluvius/files/2020-03/1901-fluvius-technical-specification-user-ports-digital-meter.pdf
 https://www.fluvius.be/sites/fluvius/files/2019-12/e-mucs_h_ed_1_3.pdf
 
-Swedish specification (Branschrekommendation för lokalt
-kundgränssnitt för elmätare 2.0)
+- Swedish specification (Branschrekommendation för lokalt kundgränssnitt för elmätare 2.0)
 https://www.energiforetagen.se/globalassets/energiforetagen/det-erbjuder-vi/kurser-och-konferenser/elnat/branschrekommendation-lokalt-granssnitt-v2_0-201912.pdf
+
+- In Lithuania Dutch specification is used (in Lithuanian):
+  https://ismaniejiskaitikliai.lt/dazniausiai-uzduodami-klausimai/1#c-8/t-74
+ 
+
 
 
