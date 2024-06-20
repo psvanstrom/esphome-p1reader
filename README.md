@@ -12,6 +12,7 @@ The current version in main is tested with ESPHome version `2022.12.1`. Make sur
 * [KAIFA MA304H4E](https://reko.nackaenergi.se/elmatarbyte/) / Nacka Energi
 * [KAIFA CL109](https://www.oresundskraft.se/dags-for-matarbyte/) / Öresundskraft
 * [Aidon](https://www.tekniskaverken.se/kundservice/dinamatare/snart-far-du-nya-matare/) / Tekniska Verken
+* [Kamstrup Omnia](https://www.goteborgenergi.se/kundservice/elmatarbyte/sa-fungerar-din-elmatare) / Göteborgs Energi
 
 *Note:* There's a bug in older E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
   
