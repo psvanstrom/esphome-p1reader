@@ -257,6 +257,32 @@ class P1Reader : public Component, public UARTDevice {
     }
 
   private:
+    int timedRead() {
+      const unsigned long _startMillis = millis();
+      int c;
+      do {
+        if (available()) {
+            c = read();
+            if (c >= 0) return c;
+        }
+        else {
+            delay(1);
+        }
+      } while(millis() - _startMillis < 1000); // default timeout is 1000ms
+      return -1;  // indicates timeout
+    }
+
+    int readBytesUntil(const char terminator, char *data, const size_t len) {
+        size_t count = 0;
+        while (count < len) {
+            int c = timedRead();
+            if (c < 0 || terminator == (char) c) break;
+            data[count] = (char) c;
+            count++;
+        }
+        return count;
+    }
+
     void readP1Message() {
       if (available()) {
         uint16_t crc = 0x0000;
@@ -264,7 +290,7 @@ class P1Reader : public Component, public UARTDevice {
         bool telegramEnded = false;
 
         while (available()) {
-          int len = Serial.readBytesUntil('\n', buffer, BUF_SIZE);
+          int len = readBytesUntil('\n', buffer, BUF_SIZE-1);
 
           if (len > 0) {
           	ESP_LOGD("data", "%s", buffer);
