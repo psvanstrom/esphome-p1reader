@@ -1,27 +1,41 @@
 //-------------------------------------------------------------------------------------
 // ESPHome P1 Electricity Meter custom sensor
 // Copyright 2020 Pär Svanström
-// 
+//
 // History
 //  0.1.0 2020-11-05:   Initial release
 //  0.x.0 2023-04-18:   Added HDLC support
+//  0.x.1 2024-06-18:   Fix receiving large messages
+//
+//                       When the smartmeter sends large messages (>1KB) these will not fit 
+//                       in a single buffer, will not be availble for reading in one go. 
+//                       This will cause CRC errors.
+//                       
+//                       Reorganized steps. Moved buffer cleanup after the last line is
+//                       received (line starting with !).
+//                       Moved creating new ParsedMessages out of the reading loop.     
+//                       
+//                       This avoids possibly resetting previously parsed values. Also  
+//                       avoids buffer celanup causing bad CRC when large messages (>1KB) are 
+//                       coming through the serial line.
 //
 // MIT License
-// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
-// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
 // and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 //
 // The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 //
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS 
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 // IN THE SOFTWARE.
 //-------------------------------------------------------------------------------------
 
 #include "esphome.h"
 
-#define BUF_SIZE 60
+//#define BUF_SIZE 60
+#define BUF_SIZE 8192
 
 class ParsedMessage {
   public:
@@ -71,7 +85,7 @@ class P1Reader : public Component, public UARTDevice {
   const char* DATA_ID = "1-0";
 
   protected:
-    char buffer[BUF_SIZE];
+    char buffer[BUF_SIZE+2];
 
   public:
     Sensor *cumulativeActiveImport = new Sensor();
@@ -257,15 +271,15 @@ class P1Reader : public Component, public UARTDevice {
     }
 
   private:
+    uint16_t crc = 0x0000;
+    ParsedMessage parsed = ParsedMessage();
+    bool telegramEnded = false;
+    int len=0;
+
     void readP1Message() {
       if (available()) {
-        uint16_t crc = 0x0000;
-        ParsedMessage parsed = ParsedMessage();
-        bool telegramEnded = false;
-
         while (available()) {
-          int len = Serial.readBytesUntil('\n', buffer, BUF_SIZE);
-
+          len = Serial.readBytesUntil('\n', buffer, BUF_SIZE);
           if (len > 0) {
           	ESP_LOGD("data", "%s", buffer);
 
@@ -281,9 +295,20 @@ class P1Reader : public Component, public UARTDevice {
               ESP_LOGI("crc", "Telegram read. CRC: %04X = %04X. PASS = %s", crc, crcFromMsg, parsed.crcOk ? "YES": "NO");
               telegramEnded = true;
 
+              // if the CRC pass, publish sensor values
+              if (parsed.crcOk) {
+               publishSensors(&parsed);
+              }
+
+              // clean up...
+              parsed = ParsedMessage();
+              crc = 0x0000;
+              memset(buffer, 0, BUF_SIZE - 1);
+              telegramEnded = false;
+
             // otherwise pass the row through the CRC calculation
             } else {
-              for (int i = 0; i < len + 1; i++) {
+              for (int i = 0; i < len + 1 ; i++) {
                 crc = crc16_update(crc, buffer[i]);
               }
             }
@@ -301,23 +326,18 @@ class P1Reader : public Component, public UARTDevice {
               }
             }
           }
-          // clean buffer
-          memset(buffer, 0, BUF_SIZE - 1);
-        
-          if (!telegramEnded && !available()) {
-          	// wait for more data
-          	delay(40);
-          }
+
+          //if (!telegramEnded && !available()) {
+          // wait for more data
+          //  delay(40);
+          //
+          //}
         }
 
-        // if the CRC pass, publish sensor values
-        if (parsed.crcOk) {
-          publishSensors(&parsed);
-        }
       }
     }
 
-    
+
 };
 
 class P1ReaderHDLC : public P1Reader {
@@ -354,7 +374,7 @@ class P1ReaderHDLC : public P1Reader {
         ESP_LOGE("hdlc", "Unexpected tag %X in struct, bailing out", tag);
         return false;
       }
-      
+
       uint8_t str_length = read();
       if(Serial.readBytes(buffer, str_length) != str_length) {
         ESP_LOGE("hdlc", "Unable to read %d bytes of OBIS code", str_length);
@@ -384,14 +404,14 @@ class P1ReaderHDLC : public P1Reader {
         uvalue = buffer[3] | buffer[2] << 8 | buffer[1] << 16 | buffer[0] << 24;
         //ESP_LOGD("hdlc", "Value of uvalue is %u", uvalue);
       } else if (tag == 0x10) {
-        Serial.readBytes(buffer, 2); 
-        //value = buffer[0] | buffer[1] << 8; // 
+        Serial.readBytes(buffer, 2);
+        //value = buffer[0] | buffer[1] << 8; //
         is_signed = true;
         value = buffer[1] | buffer[0] << 8;
         //ESP_LOGD("hdlc", "(Signed) Value of value is %d", value);
       } else if (tag == 0x12) {
-        Serial.readBytes(buffer, 2); 
-        //uvalue = buffer[0] | buffer[1] << 8; // 
+        Serial.readBytes(buffer, 2);
+        //uvalue = buffer[0] | buffer[1] << 8; //
         uvalue = buffer[1] | buffer[0] << 8;
         //ESP_LOGD("hdlc", "(Unsigned) Value of uvalue is %u", uvalue);
       } else {
@@ -412,24 +432,24 @@ class P1ReaderHDLC : public P1Reader {
 
         double scaled_value = pow(10, scaler) * value;
 
-        // Volt and Ampere are the only two units where p1reader.yaml doesn't specify 
+        // Volt and Ampere are the only two units where p1reader.yaml doesn't specify
         // we should report in 1/1000, all others should be divided.
         if(unit != 33 && unit != 35)
           scaled_value = scaled_value / 1000;
-        
+
         snprintf(value_buf, 24, "%f", scaled_value);
         parseRow(parsed, obis, value_buf);
       }
 
 
-      
+
 
       return true;
     }
 
     /* Reads messages formatted according to "Branschrekommendation v1.2", which
        at the time of writing (20210207) is used by Tekniska Verken's Aidon 6442SE
-       meters. This is a binary format, with a HDLC Frame. 
+       meters. This is a binary format, with a HDLC Frame.
 
        This code is in no way a generic HDLC Frame parser, but it does the job
        of decoding this particular data stream.
@@ -475,7 +495,7 @@ class P1ReaderHDLC : public P1Reader {
             parseHDLCState = OUTSIDE_FRAME;
             return;
           }
-          // ESP_LOGD("hdlc", "Got %d HDLC bytes, now reading 4 Invoke ID And Priority bytes", len);          
+          // ESP_LOGD("hdlc", "Got %d HDLC bytes, now reading 4 Invoke ID And Priority bytes", len);
           len = Serial.readBytes(buffer, 4);
           if (len != 4 || buffer[0] != 0x40 || buffer[1] != 0x00 || buffer[2] != 0x00 || buffer[3] != 0x00)
           {
@@ -489,7 +509,7 @@ class P1ReaderHDLC : public P1Reader {
         //ESP_LOGD("hdlc", "Length of datetime field is %d", data);
         Serial.readBytes(buffer, data);
 
-        data = read();      
+        data = read();
         ESP_LOGD("hdlc", "Expect 0x01 (array tag), got 0x%02x", data);
         if(data != 0x01) {
           parseHDLCState = OUTSIDE_FRAME;
