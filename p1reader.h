@@ -387,7 +387,9 @@ class P1ReaderHDLC : public P1Reader {
         Serial.readBytes(buffer, 2); 
         //value = buffer[0] | buffer[1] << 8; // 
         is_signed = true;
-        value = buffer[1] | buffer[0] << 8;
+        // value is 32 bit, so we must use 16 bit temp variable to get sign correct (casting was unsuccessful)
+        int16_t temp = buffer[1] | buffer[0] << 8;
+        value = temp;
         //ESP_LOGD("hdlc", "(Signed) Value of value is %d", value);
       } else if (tag == 0x12) {
         Serial.readBytes(buffer, 2); 
