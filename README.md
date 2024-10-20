@@ -1,5 +1,5 @@
 # esphome-p1reader
-ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters that implements the specification defined in the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) version 1.3 and above.
+ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters that implement the specification defined in the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) version 1.3 and above.
 
 ## ESPHome version
 The current version in main is tested with ESPHome version `2023.8.1`. Make sure your ESPHome version is up to date if you experience compile problems.
@@ -8,10 +8,11 @@ The current version in main is tested with ESPHome version `2023.8.1`. Make sure
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2_.pdf) / Ellevio & Skånska Energi ([Info, port activation, etc.](https://www.ellevio.se/privat/om-din-el/elen-i-hemmet/forsta-din-elmatare/))
 * [Landis+Gyr E360](https://eu.landisgyr.com/blog-se/e360-en-smart-matare-som-optimerarden-totala-agandekostnaden)
 * [Itron A300](https://boraselnat.se/elnat/elmatarbyte-2020-2021/sa-har-fungerar-din-nya-elmatare/) / Borås Elnät
-* [S34U18 (Sanxing SX631)](https://www.vattenfalleldistribution.se/matarbyte/nya-elmataren/) / Vattenfall 
+* [S34U18 (Sanxing SX631)](https://www.vattenfalleldistribution.se/globalassets/vattenfalleldistribution/kund-i-elnatet/matarbyte/nya-elmataren/vattenfall-eldistribution_anvandarmanual-elmatare.pdf) / Vattenfall
 * [KAIFA MA304H4E](https://reko.nackaenergi.se/elmatarbyte/) / Nacka Energi
 * [KAIFA CL109](https://www.oresundskraft.se/dags-for-matarbyte/) / Öresundskraft
 * [Aidon](https://www.tekniskaverken.se/kundservice/dinamatare/snart-far-du-nya-matare/) / Tekniska Verken
+* [Kamstrup Omnia](https://www.goteborgenergi.se/kundservice/elmatarbyte/sa-fungerar-din-elmatare) / Göteborgs Energi
 
 *Note:* There's a bug in older E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
   
@@ -29,7 +30,7 @@ I have used an ESP-12 based NodeMCU for my circuit, another alternative is the c
 - 1 RJ12 to RJ12 cable (6 wires)
 
 ### Wiring
-The circuit is very simple, basically the 5V TX output on the P1 connector is converted to 3.3V and inverted by the transistor and connected to the UART0 RX pin on the microcontroller. The RTS (request to send) pin is pulled high so that data is sent continously and GND and 5V is taken from the P1 connector to drive the microcontroller.
+The circuit is very simple, basically the 5V TX output on the P1 connector is converted to 3.3V and inverted by the transistor and connected to the UART0 RX pin on the microcontroller. The RTS (request to send) pin is pulled high so that data is sent continuously and GND and 5V are taken from the P1 connector to drive the microcontroller.
 
 #### Wiring NodeMCU ESP-12
 ![Wiring Diagram](images/wiring.png)
@@ -202,24 +203,28 @@ The last row contains the CRC check. If you constantly get invalid CRC there mig
 Specification overview:
 https://www.tekniskaverken.se/siteassets/tekniska-verken/elnat/elmatare-och-elanvandning/aidon-rj12-han-interface-v17a.pdf
 
-OBIS codes:
+- OBIS codes:
 https://tech.enectiva.cz/en/installation-instructions/others/obis-codes-meaning/
 
-P1 hardware info (in Dutch):
+- P1 hardware info (in Dutch):
 http://domoticx.com/p1-poort-slimme-meter-hardware/
 
-Original Dutch specification (P1 Companion Standard - DSMR 5.0.2)
+- Original Dutch specification (P1 Companion Standard - DSMR 5.0.2).
 https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
 
-Luxembourg specification (E-Meter P1 Specification 1.1.2)
+- Luxembourg specification (E-Meter P1 Specification 1.1.2)
 https://www.luxmetering.lu/pdf/SPEC%20-%20E-Meter_P1_specification_20210308.pdf
 
-Belgian specification
+- Belgian specification
 https://www.fluvius.be/sites/fluvius/files/2020-03/1901-fluvius-technical-specification-user-ports-digital-meter.pdf
 https://www.fluvius.be/sites/fluvius/files/2019-12/e-mucs_h_ed_1_3.pdf
 
-Swedish specification (Branschrekommendation för lokalt
-kundgränssnitt för elmätare 2.0)
+- Swedish specification (Branschrekommendation för lokalt kundgränssnitt för elmätare 2.0)
 https://www.energiforetagen.se/globalassets/energiforetagen/det-erbjuder-vi/kurser-och-konferenser/elnat/branschrekommendation-lokalt-granssnitt-v2_0-201912.pdf
+
+- In Lithuania Dutch specification is used (in Lithuanian):
+  https://ismaniejiskaitikliai.lt/dazniausiai-uzduodami-klausimai/1#c-8/t-74
+ 
+
 
 
