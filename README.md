@@ -2,7 +2,7 @@
 ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters that implement the specification defined in the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) version 1.3 and above.
 
 ## ESPHome version
-The current version in main is tested with ESPHome version `2022.12.1`. Make sure your ESPHome version is up to date if you experience compile problems.
+The current version in main is tested with ESPHome version `2023.8.1`. Make sure your ESPHome version is up to date if you experience compile problems.
 
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2_.pdf) / Ellevio & Skånska Energi ([Info, port activation, etc.](https://www.ellevio.se/privat/om-din-el/elen-i-hemmet/forsta-din-elmatare/))
@@ -131,22 +131,14 @@ uart:
     id: uart_bus
     baud_rate: 115200
     rx_pin: D7
-    rx_buffer_size: 1700    
+    rx_buffer_size: 3072    
 ```
 
 [Sample configuration](./samples/slimmelezer.yaml), uses !secret for all site specific configuration, see below.
 
 ## Installation
-Clone the repository and create a companion `secrets.yaml` file with the following fields:
 
-If your electricity supplier is using Aidon 6442SE or Aidon 653X, you might also need to change the instantiation of the meter_sensor.
-As these meters are sometimes using the HDLC-protocol instead of ASCII. Open [p1reader.yaml](./p1reader.yaml)
-```c
-// Change
-auto meter_sensor = new P1Reader(id(uart_bus));
-// To
-auto meter_sensor = new P1ReaderHDLC(id(uart_bus));
-```
+Clone the repository and create a companion `secrets.yaml` file with the following fields:
 
 Create a companion `secrets.yaml` file with the following fields:
 ```
@@ -159,6 +151,8 @@ ota_password: <The OTA password>
 Check [the Native API Component chapter of the ESPHome documentation](https://esphome.io/components/api.html#configuration-variables) for more info on the encryption key, this page also let you easily generate an encryption key.
 
 Make sure to place the `secrets.yaml` file in the root path of the cloned project. The `fallback_password` and `ota_password` fields can be set to any password before doing the initial upload of the firmware.
+
+If your electricity supplier is using an Aidon 6442SE or Aidon 653X meter, they might still be using the HDLC protocol rather than the ASCII format for the meter data on the P1 port. Use the [Sample configuration for HDLC](./samples/p1reader_hdlc.yaml) to handle this setup. It configures a different input parser to handle the HDLC protocol.
 
 Prepare the microcontroller with ESPHome before you connect it to the circuit:
 - Install the `esphome` [command line tool](https://esphome.io/guides/getting_started_command_line.html)
@@ -201,11 +195,13 @@ You can check the logs by issuing `esphome p1reader.yaml logs` (or use the super
 [18:40:01][I][crc:275]: Telegram read. CRC: 7945 = 7945. PASS = YES
 ```
 
+Note that the default is the `INFO` loglevel since logging affects performance.
+
 The last row contains the CRC check. If you constantly get invalid CRC there might be something wrong with the serial communication.
 
 ## Technical documentation
-- Specification overview:
-https://www.tekniskaverken.se/siteassets/tekniska-verken/elnat/aidonfd-rj12-han-interface-se-v13a.cleaned.pdf
+Specification overview:
+https://www.tekniskaverken.se/siteassets/tekniska-verken/elnat/elmatare-och-elanvandning/aidon-rj12-han-interface-v17a.pdf
 
 - OBIS codes:
 https://tech.enectiva.cz/en/installation-instructions/others/obis-codes-meaning/
