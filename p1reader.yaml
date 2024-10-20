@@ -31,7 +31,8 @@ api:
     
 ota:
   password: !secret ota_password
-
+  platform: esphome
+  
 uart:
   id: uart_bus
   tx_pin: TX
