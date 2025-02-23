@@ -2,7 +2,8 @@
 ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters that implement the specification defined in the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) version 1.3 and above.
 
 ## ESPHome version
-The current version in main is tested with ESPHome version `2023.8.1`. Make sure your ESPHome version is up to date if you experience compile problems.
+The current version in main is tested with ESPHome version `2024.12.4` and `2025.2.0`. Make sure your ESPHome version is up to date if you experience compile problems.
+(NOTE: This component is now an External Component as the Custom Components API have been removed from ESPHome)
 
 ## Verified meter hardware / supplier
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2_.pdf) / Ellevio & Skånska Energi ([Info, port activation, etc.](https://www.ellevio.se/privat/om-din-el/elen-i-hemmet/forsta-din-elmatare/))

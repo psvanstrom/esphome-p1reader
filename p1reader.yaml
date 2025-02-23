@@ -1,11 +1,22 @@
+substitutions:
+  device_name: esp-p1reader
+
 esphome:
-  name: esp-p1reader
-  platform: ESP8266
+  name: ${device_name}
+  comment: "P1 module to read smart meter"
+  name_add_mac_suffix: false
+  project:
+    name: p1reader.esp-p1reader-component
+    version: "1.0"
+
+esp8266:
   board: nodemcu
-  includes:
-    - parsed_message.h
-    - p1reader_base.h
-    - p1reader.h
+  restore_from_flash: true
+
+external_components:
+  - source: ../esphome-components
+# source: ../esphome-components is a reference to where in your HA config folder you put the contents of that repo folder relative to the YAML file
+# source: github://xxx/esphome-p1reader@main to pull from branch main in the github repo called esphome-p1reader by the user xxx ()
 
 wifi:
   ssid: !secret wifi_ssid
@@ -38,155 +49,144 @@ uart:
   tx_pin: TX
   rx_pin: RX
   baud_rate: 115200
-  rx_buffer_size: 3072    # Buffer size controls polling frequency
+  rx_buffer_size: 3072    # UART Buffer size controls polling frequency
 
-# If your electricity meter is an Aidon, which use the older
-# Branschstandard (1.2) where the data is HDLC-formatted
-# Change the first line after lambda to
-# auto_meter_sensor = new P1ReaderHDLC(id(uart_bus));
-# else
-# auto meter_sensor = new P1Reader(id(uart_bus));
+p1reader:
+  - id: p1reader_esp
+    uart_id: uart_bus
+#  Size of the internal working buffer (default 60)
+#    buffer_size: 3072
+#    protocol: hdlc
+#  OR (the default if left unset)
+#    protocol: ascii
+
 sensor:
-- platform: custom
-  lambda: |-
-    auto meter_sensor = new P1Reader(id(uart_bus));
-    App.register_component(meter_sensor);
-    return {
-      meter_sensor->cumulativeActiveImport,
-      meter_sensor->cumulativeActiveExport,
-      meter_sensor->cumulativeReactiveImport,
-      meter_sensor->cumulativeReactiveExport,
-      meter_sensor->momentaryActiveImport,
-      meter_sensor->momentaryActiveExport,
-      meter_sensor->momentaryReactiveImport,
-      meter_sensor->momentaryReactiveExport,
-      meter_sensor->momentaryActiveImportL1,
-      meter_sensor->momentaryActiveExportL1,
-      meter_sensor->momentaryActiveImportL2,
-      meter_sensor->momentaryActiveExportL2,
-      meter_sensor->momentaryActiveImportL3,
-      meter_sensor->momentaryActiveExportL3,
-      meter_sensor->momentaryReactiveImportL1,
-      meter_sensor->momentaryReactiveExportL1,
-      meter_sensor->momentaryReactiveImportL2,
-      meter_sensor->momentaryReactiveExportL2,
-      meter_sensor->momentaryReactiveImportL3,
-      meter_sensor->momentaryReactiveExportL3,
-      meter_sensor->voltageL1,
-      meter_sensor->voltageL2,
-      meter_sensor->voltageL3,
-      meter_sensor->currentL1,
-      meter_sensor->currentL2,
-      meter_sensor->currentL3
-    };
-  sensors:
-  - name: "Cumulative Active Import"
-    unit_of_measurement: kWh
-    accuracy_decimals: 3
-    state_class: "total_increasing"
-    device_class: "energy"
-  - name: "Cumulative Active Export"
-    unit_of_measurement: kWh
-    accuracy_decimals: 3
-    state_class: "total_increasing"
-    device_class: "energy"
-  - name: "Cumulative Reactive Import"
-    unit_of_measurement: kvarh
-    accuracy_decimals: 3
-  - name: "Cumulative Reactive Export"
-    unit_of_measurement: kvarh
-    accuracy_decimals: 3
-  - name: "Momentary Active Import"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "power"
-  - name: "Momentary Active Export"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "power"
-  - name: "Momentary Reactive Import"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Export"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Active Import Phase 1"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "power"
-  - name: "Momentary Active Export Phase 1"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "power"
-  - name: "Momentary Active Import Phase 2"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "power"
-  - name: "Momentary Active Export Phase 2"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "power"
-  - name: "Momentary Active Import Phase 3"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "power"
-  - name: "Momentary Active Export Phase 3"
-    unit_of_measurement: kW
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "power"
-  - name: "Momentary Reactive Import Phase 1"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Export Phase 1"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Import Phase 2"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Export Phase 2"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Import Phase 3"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Momentary Reactive Export Phase 3"
-    unit_of_measurement: kvar
-    accuracy_decimals: 3
-  - name: "Voltage Phase 1"
-    unit_of_measurement: V
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "voltage"
-  - name: "Voltage Phase 2"
-    unit_of_measurement: V
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "voltage"
-  - name: "Voltage Phase 3"
-    unit_of_measurement: V
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "voltage"
-  - name: "Current Phase 1"
-    unit_of_measurement: A
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "current"
-  - name: "Current Phase 2"
-    unit_of_measurement: A
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "current"
-  - name: "Current Phase 3"
-    unit_of_measurement: A
-    accuracy_decimals: 3
-    state_class: "measurement"
-    device_class: "current"
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    cumulative_active_import:
+      name: "Cumulative Active Import"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    cumulative_active_export:
+      name: "Cumulative Active Export"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    cumulative_reactive_import:
+      name: "Cumulative Reactive Import"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    cumulative_reactive_export:
+      name: "Cumulative Reactive Export"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_import:
+      name: "Momentary Active Import"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_export:
+      name: "Momentary Active Export"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_reactive_import:
+      name: "Momentary Reactive Import"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_reactive_export:
+      name: "Momentary Reactive Export"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_import_l1:
+      name: "Momentary Active Import Phase 1"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_export_l1:
+      name: "Momentary Active Export Phase 1"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_import_l2:
+      name: "Momentary Active Import Phase 2"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_export_l2:
+      name: "Momentary Active Export Phase 2"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_import_l3:
+      name: "Momentary Active Import Phase 3"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_export_l3:
+      name: "Momentary Active Export Phase 3"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_reactive_import_l1:
+      name: "Momentary Reactive Import Phase 1"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_reactive_import_l2:
+      name: "Momentary Reactive Import Phase 2"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_reactive_import_l3:
+      name: "Momentary Reactive Import Phase 3"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_reactive_export_l1:
+      name: "Momentary Reactive Export Phase 1"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_reactive_export_l2:
+      name: "Momentary Reactive Export Phase 2"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_reactive_export_l3:
+      name: "Momentary Reactive Export Phase 3"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    voltage_l1:
+      name: "Voltage Phase 1"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    voltage_l2:
+      name: "Voltage Phase 2"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    voltage_l3:
+      name: "Voltage Phase 3"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    current_l1:
+      name: "Current Phase 1"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    current_l2:
+      name: "Current Phase 2"
+
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    current_l3:
+      name: "Current Phase 3"
