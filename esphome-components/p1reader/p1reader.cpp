@@ -224,6 +224,7 @@ namespace esphome
     
         void P1Reader::readP1MessageAscii()
         {
+            uint32_t start = millis();
             while (available())
             {
                 int len = readBytesUntilAndIncluding('\n', _buffer + _bufferLen, BUF_SIZE-_bufferLen);
@@ -288,6 +289,12 @@ namespace esphome
                         delayMicroseconds(_uSecondsPerByte);
                     }
                 }
+
+                if ((millis() - start) > 20)
+                {
+                    ESP_LOGD("ascii", "Waiting for the next time slice while reading message...");
+                    break;
+                }
             }
         }
 
@@ -301,13 +308,6 @@ namespace esphome
                 bool hasData = read_byte(&c);
                 if (!hasData)
                 {
-                    // No byte available, busywait for a single byte over uart
-                    delayMicroseconds(_uSecondsPerByte);
-                    if ((millis() - start) > 10)
-                    {
-                        ESP_LOGD("data", "Failed to fetch expected data within 10ms, bailing out and trying later.");
-                        return index; // return number of characters, not including terminator
-                    }
                     break;
                 }
                 *buffer++ = (char)c;
