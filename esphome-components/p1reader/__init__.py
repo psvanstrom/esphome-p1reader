@@ -3,9 +3,7 @@ import esphome.config_validation as cv
 from esphome import pins
 from esphome.components import uart
 from esphome.const import (
-    CONF_ID,
-    CONF_UART_ID,
-    CONF_RECEIVE_TIMEOUT,
+    CONF_UART_ID, CONF_ID
 )
 
 CODEOWNERS = ["cadwal"]
@@ -40,4 +38,7 @@ async def to_code(config):
     await cg.register_component(var, config)
 
     cg.add(var.set_protocol_type(config[CONF_PROTOCOL]))
-    cg.add_define("BUF_SIZE", config[CONF_BUFFER_SIZE])
+    if config[CONF_PROTOCOL] == "ascii":
+        cg.add_define("BUF_SIZE", config[CONF_BUFFER_SIZE])
+    else:
+        cg.add_define("BUF_SIZE", 4096)

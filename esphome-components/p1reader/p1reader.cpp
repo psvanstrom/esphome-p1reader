@@ -92,82 +92,129 @@ namespace esphome
         {
             if (parsedMessage->crcOk && parsedMessage->telegramComplete)
             {
-                if (parsedMessage->sendBatchOne)
+                uint32_t start = millis();
+    
+                while (parsedMessage->sensorsToSend > 0)
                 {
-                    if (cumulative_active_import != nullptr)
-                        cumulative_active_import->publish_state(parsedMessage->cumulativeActiveImport);
-                    if (cumulative_active_export != nullptr)
-                        cumulative_active_export->publish_state(parsedMessage->cumulativeActiveExport);
+                    switch (parsedMessage->sensorsToSend--)
+                    {
+                        case 1:
+                            if (cumulative_active_import != nullptr)
+                                cumulative_active_import->publish_state(parsedMessage->cumulativeActiveImport);
+                            break;
+                        case 2:
+                            if (cumulative_active_export != nullptr)
+                                cumulative_active_export->publish_state(parsedMessage->cumulativeActiveExport);
+                            break;
+                        case 3:
+                            if (momentary_active_import != nullptr)
+                                momentary_active_import->publish_state(parsedMessage->momentaryActiveImport);
+                            break;
+                        case 4:
+                            if (momentary_active_export != nullptr)
+                                momentary_active_export->publish_state(parsedMessage->momentaryActiveExport);
+                            break;
+                        case 5:
+                            if (momentary_active_import_l1 != nullptr)
+                                momentary_active_import_l1->publish_state(parsedMessage->momentaryActiveImportL1);
+                            break;
+                        case 6:
+                            if (momentary_active_export_l1 != nullptr)
+                                momentary_active_export_l1->publish_state(parsedMessage->momentaryActiveExportL1);
+                            break;
+                        case 7:
+                            if (momentary_active_import_l2 != nullptr)
+                                momentary_active_import_l2->publish_state(parsedMessage->momentaryActiveImportL2);
+                            break;
+                        case 8:
+                            if (momentary_active_export_l2 != nullptr)
+                                momentary_active_export_l2->publish_state(parsedMessage->momentaryActiveExportL2);
+                            break;
+                        case 9:
+                            if (momentary_active_import_l3 != nullptr)
+                                momentary_active_import_l3->publish_state(parsedMessage->momentaryActiveImportL3);
+                            break;
+                        case 10:
+                            if (momentary_active_export_l3 != nullptr)
+                                momentary_active_export_l3->publish_state(parsedMessage->momentaryActiveExportL3);
+                            break;
+                        case 11:
+                            if (voltage_l1 != nullptr)
+                                voltage_l1->publish_state(parsedMessage->voltageL1);
+                            break;
+                        case 12:
+                            if (voltage_l2 != nullptr)
+                                voltage_l2->publish_state(parsedMessage->voltageL2);
+                            break;
+                        case 13:
+                            if (voltage_l3 != nullptr)
+                                voltage_l3->publish_state(parsedMessage->voltageL3);
+                            break;
+                        case 14:
+                            if (current_l1 != nullptr)
+                                current_l1->publish_state(parsedMessage->currentL1);
+                            break;
+                        case 15:
+                            if (current_l2 != nullptr)
+                                current_l2->publish_state(parsedMessage->currentL2);
+                            break;
+                        case 16:
+                            if (current_l3 != nullptr)
+                                current_l3->publish_state(parsedMessage->currentL3);
+                            break;
+                        case 17:
+                            if (cumulative_reactive_import != nullptr)
+                                cumulative_reactive_import->publish_state(parsedMessage->cumulativeReactiveImport);
+                            break;
+                        case 18:
+                            if (cumulative_reactive_export != nullptr)
+                                cumulative_reactive_export->publish_state(parsedMessage->cumulativeReactiveExport);
+                            break;
+                        case 19:
+                            if (momentary_reactive_import != nullptr)
+                                momentary_reactive_import->publish_state(parsedMessage->momentaryReactiveImport);
+                            break;
+                        case 20:
+                            if (momentary_reactive_export != nullptr)
+                                momentary_reactive_export->publish_state(parsedMessage->momentaryReactiveExport);
+                            break;
+                        case 21:
+                            if (momentary_reactive_import_l1 != nullptr)
+                                momentary_reactive_import_l1->publish_state(parsedMessage->momentaryReactiveImportL1);
+                            break;
+                        case 22:
+                            if (momentary_reactive_export_l1 != nullptr)
+                                momentary_reactive_export_l1->publish_state(parsedMessage->momentaryReactiveExportL1);
+                            break;
+                        case 23:
+                            if (momentary_reactive_import_l2 != nullptr)
+                                momentary_reactive_import_l2->publish_state(parsedMessage->momentaryReactiveImportL2);
+                            break;
+                        case 24:
+                            if (momentary_reactive_export_l2 != nullptr)
+                                momentary_reactive_export_l2->publish_state(parsedMessage->momentaryReactiveExportL2);
+                            break;
+                        case 25:
+                            if (momentary_reactive_import_l3 != nullptr)
+                                momentary_reactive_import_l3->publish_state(parsedMessage->momentaryReactiveImportL3);
+                            break;
+                        case 26:
+                            if (momentary_reactive_export_l3 != nullptr)
+                                momentary_reactive_export_l3->publish_state(parsedMessage->momentaryReactiveExportL3);
+                            break;
+                        default:
+                            // Unused
+                            break;
+                    }
 
-                    if (momentary_active_import != nullptr)
-                        momentary_active_import->publish_state(parsedMessage->momentaryActiveImport);
-                    if (momentary_active_export != nullptr)
-                        momentary_active_export->publish_state(parsedMessage->momentaryActiveExport);
-
-                    if (momentary_active_import_l1 != nullptr)
-                        momentary_active_import_l1->publish_state(parsedMessage->momentaryActiveImportL1);
-                    if (momentary_active_export_l1 != nullptr)
-                        momentary_active_export_l1->publish_state(parsedMessage->momentaryActiveExportL1);
-
-                    if (momentary_active_import_l2 != nullptr)
-                        momentary_active_import_l2->publish_state(parsedMessage->momentaryActiveImportL2);
-                    if (momentary_active_export_l2 != nullptr)
-                        momentary_active_export_l2->publish_state(parsedMessage->momentaryActiveExportL2);
-                    
-                    if (momentary_active_import_l3 != nullptr)
-                        momentary_active_import_l3->publish_state(parsedMessage->momentaryActiveImportL3);
-                    if (momentary_active_export_l3 != nullptr)
-                        momentary_active_export_l3->publish_state(parsedMessage->momentaryActiveExportL3);
-
-                    if (voltage_l1 != nullptr)
-                        voltage_l1->publish_state(parsedMessage->voltageL1);
-                    if (voltage_l2 != nullptr)
-                        voltage_l2->publish_state(parsedMessage->voltageL2);
-                    if (voltage_l3 != nullptr)
-                        voltage_l3->publish_state(parsedMessage->voltageL3);
-                
-                    parsedMessage->sendBatchOne = false;
-                    
-                    ESP_LOGD("publish", "sensors published (part one). CRC: %04X", parsedMessage->crc);
+                    if ((millis() - start) > 20)
+                    {
+                        return; // Wait for next execution slice
+                    }
                 }
-                else
-                {
-                    if (current_l1 != nullptr)
-                        current_l1->publish_state(parsedMessage->currentL1);
-                    if (current_l2 != nullptr)
-                        current_l2->publish_state(parsedMessage->currentL2);
-                    if (current_l3 != nullptr)
-                        current_l3->publish_state(parsedMessage->currentL3);
 
-                    if (cumulative_reactive_import != nullptr)
-                        cumulative_reactive_import->publish_state(parsedMessage->cumulativeReactiveImport);
-                    if (cumulative_reactive_export != nullptr)
-                        cumulative_reactive_export->publish_state(parsedMessage->cumulativeReactiveExport);
-
-                    if (momentary_reactive_import != nullptr)
-                        momentary_reactive_import->publish_state(parsedMessage->momentaryReactiveImport);
-                    if (momentary_reactive_export != nullptr)
-                        momentary_reactive_export->publish_state(parsedMessage->momentaryReactiveExport);
-
-                    if (momentary_reactive_import_l1 != nullptr)
-                        momentary_reactive_import_l1->publish_state(parsedMessage->momentaryReactiveImportL1);
-                    if (momentary_reactive_export_l1 != nullptr)
-                        momentary_reactive_export_l1->publish_state(parsedMessage->momentaryReactiveExportL1);
-
-                    if (momentary_reactive_import_l2 != nullptr)
-                        momentary_reactive_import_l2->publish_state(parsedMessage->momentaryReactiveImportL2);
-                    if (momentary_reactive_export_l2 != nullptr)
-                        momentary_reactive_export_l2->publish_state(parsedMessage->momentaryReactiveExportL2);
-
-                    if (momentary_reactive_import_l3 != nullptr)
-                        momentary_reactive_import_l3->publish_state(parsedMessage->momentaryReactiveImportL3);
-                    if (momentary_reactive_export_l3 != nullptr)
-                        momentary_reactive_export_l3->publish_state(parsedMessage->momentaryReactiveExportL3);
-
-                    ESP_LOGI("publish", "Sensors published (complete). CRC: %04X", parsedMessage->crc);
-
-                    parsedMessage->initNewTelegram();
-                }
+                ESP_LOGI("publish", "Sensors published (complete). CRC: %04X", parsedMessage->crc);
+                parsedMessage->initNewTelegram();
             }
             else if (!parsedMessage->crcOk && parsedMessage->telegramComplete)
             {
@@ -236,7 +283,7 @@ namespace esphome
                     } 
                     else 
                     {
-                        ESP_LOGV("data", "Partial line [%s] received", _buffer);
+                        ESP_LOGV("data", "Partial line [%s] received, busywaiting for one byte", _buffer);
                         // if we did not get a complete line, busywait for a single byte over uart
                         delayMicroseconds(_uSecondsPerByte);
                     }
@@ -247,18 +294,43 @@ namespace esphome
         size_t P1Reader::readBytesUntilAndIncluding(char terminator, char *buffer, size_t length)
         {
             size_t index = 0;
+            uint32_t start = millis();
             while (index < length)
             {
                 uint8_t c;
                 bool hasData = read_byte(&c);
-                if (!hasData) break;
+                if (!hasData)
+                {
+                    // No byte available, busywait for a single byte over uart
+                    delayMicroseconds(_uSecondsPerByte);
+                    if ((millis() - start) > 10)
+                    {
+                        ESP_LOGD("data", "Failed to fetch expected data within 10ms, bailing out and trying later.");
+                        return index; // return number of characters, not including terminator
+                    }
+                    break;
+                }
                 *buffer++ = (char)c;
                 index++;
                 if (c == terminator)
+                {
                     break;
+                }
             }
 
-            return index; // return number of characters, not including null terminator
+            return index; // return number of characters, not including terminator
+        }
+
+        uint16_t crc16_x25(byte* data, int len)
+        {
+            uint16_t crc = 0xffff;
+            for (int i = 0; i < len; i++)
+            {
+                crc ^= data[i];
+                for (unsigned k = 0; k < 8; k++)
+                    crc = (crc & 1) != 0 ? (crc >> 1) ^ 0x8408 : crc >> 1;
+            }
+            return ~crc;
         }
 
         /*  Reads messages formatted according to "Branschrekommendation v1.2", which
@@ -273,193 +345,278 @@ namespace esphome
             if (available())
             {
                 uint8_t data = 0;
-                uint16_t crc = 0x0000;
+                uint32_t start = millis();
 
-                while (parseHDLCState == OUTSIDE_FRAME)
+                while (_parseHDLCState == OUTSIDE_FRAME)
                 {
-                    data = read();
-                    if (data == 0x7e)
+                    bool hasData = read_byte(&data);
+                    if (hasData && data == 0x7e)
                     {
-                        // ESP_LOGD("hdlc", "Found start of frame");
-                        parseHDLCState = FOUND_FRAME;
+                        uint8_t wait = 10;
+                        while (!hasData && wait > 0)
+                        {
+                            hasData = read_byte(&data);
+                            if (!hasData)
+                            {
+                                delayMicroseconds(_uSecondsPerByte);
+                                wait--;
+                            }
+                        }
+
+                        if (!hasData)
+                        {
+                            ESP_LOGD("hdlc", "Possibly found end of frame while looking for start of frame, bailing out and trying again later...");
+                        }
+
+                        // clean buffer for next packet
+                        memset(_buffer, 0, BUF_SIZE);
+                        _bufferLen = 0;
+
+                        if (data == 0x7e)
+                        {
+                            _buffer[_bufferLen++] = data;
+                        }
+                        else
+                        {
+                            _buffer[_bufferLen++] = 0x7e;
+                            _buffer[_bufferLen++] = data;
+                        }
+
+                        _parseHDLCState = READING_FRAME;
                         break;
+                        ESP_LOGD("hdlc", "Found start of frame...");
+                    }
+                }
 
-                        int8_t next = peek();
+                while (_parseHDLCState == READING_FRAME)
+                {
+                    bool hasData = read_byte(&data);
+                    if (hasData)
+                    {
+                        _buffer[_bufferLen++] = data;
 
-                        // ESP_LOGD("hdlc", "Next is %d", next);
-
-                        if (next == 0x7e)
+                        if (data == 0x7e)
                         {
-                            read(); // We were actually at the end flag, consume the start flag of the next frame.
-                        } 
-                        else if (next == -1)
+                            _parseHDLCState = FOUND_FRAME;
+                            return; // Always parse in a separate timeslot
+                            ESP_LOGD("hdlc", "Found end of frame...");
+                        }
+
+                        if (_bufferLen >= BUF_SIZE)
                         {
-                            ESP_LOGE("hdlc", "No char available after flag, out of sync. Returning");
-                            parseHDLCState = OUTSIDE_FRAME;
+                            _parseHDLCState = OUTSIDE_FRAME;
+                            ESP_LOGE("hdlc", "Failed to read frame, buffer overflow, bailing out...");
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        // No byte available, busywait for a single byte over uart
+                        delayMicroseconds(_uSecondsPerByte);
+                        if ((millis() - start) > 10)
+                        {
+                            ESP_LOGD("hdlc", "Failed to fetch expected data within 10ms, bailing out and trying later.");
                             return;
                         }
                     }
                 }
-
-                if (parseHDLCState == FOUND_FRAME)
+            }
+            
+            if (_parseHDLCState == FOUND_FRAME)
+            {
+                if (_bufferLen < 17)
                 {
-                    // Read various static HDLC Frame information we don't care about
-                    int len = read_array((uint8_t*)_buffer, 12);
-                    if (len != 12) {
-                        ESP_LOGE("hdlc", "Expected 12 bytes, got %d bytes - out of sync. Returning", len);
-                        parseHDLCState = OUTSIDE_FRAME;
-                        return;
-                    }
-                    // ESP_LOGD("hdlc", "Got %d HDLC bytes, now reading 4 Invoke ID And Priority bytes", len);          
-                    len = read_array((uint8_t*)_buffer, 4);
-                    if (len != 4 || _buffer[0] != 0x40 || _buffer[1] != 0x00 || _buffer[2] != 0x00 || _buffer[3] != 0x00)
-                    {
-                        ESP_LOGE("hdlc", "Expected 0x40 0x00 0x00 0x00, got %X %X %X %X - out of sync, returning.", _buffer[0], _buffer[1], _buffer[2], _buffer[3]);
-                        parseHDLCState = OUTSIDE_FRAME;
-                        return;
-                    }
-                }
-
-                data = read(); // Expect length of time field, usually 0
-                //ESP_LOGD("hdlc", "Length of datetime field is %d", data);
-                read_array((uint8_t*)_buffer, data);
-
-                data = read();      
-                ESP_LOGD("hdlc", "Expect 0x01 (array tag), got 0x%02x", data);
-                if (data != 0x01)
-                {
-                    parseHDLCState = OUTSIDE_FRAME;
+                    _parseHDLCState = OUTSIDE_FRAME;
+                    ESP_LOGE("hdlc", "Frame to small, skipping to next frame. (%d)", _bufferLen);
                     return;
                 }
 
-                uint8_t array_length = read();
-                ESP_LOGD("hdlc", "Array length is %d", array_length);
-
-                for (int i=0;i<array_length;i++) 
+                uint16_t messageLength = ((_buffer[1] & 0x0f) << 8) + (uint8_t)_buffer[2];
+                if (messageLength != (_bufferLen - 2))
                 {
-                    if(!readHDLCStruct())
+                    _parseHDLCState = OUTSIDE_FRAME;
+                    ESP_LOGE("hdlc", "Message length (%d) not matching frame length (%d), skipping to next frame.", 
+                            messageLength, _bufferLen-2);
+                    return;
+                }
+
+                uint16_t crc = ((uint8_t)_buffer[_bufferLen-2] << 8) | (uint8_t)_buffer[_bufferLen-3];
+                uint16_t crcCalculated = crc16_x25((byte*)_buffer + 1, _bufferLen - 4); // FCS
+                if (crc != crcCalculated)
+                {
+                    _parseHDLCState = OUTSIDE_FRAME;
+                    ESP_LOGE("hdlc", "Message crc (%04x) not matching frame crc (%04x), skipping to next frame.", 
+                            crc, crcCalculated);
+                    return;
+                }
+
+                _parsedMessage.crcOk = true;
+
+                _messagePos = 17;
+
+                // Skip date field (normally 0)
+                _messagePos += _buffer[_messagePos++];
+
+                // Check for start of struct array
+                if (_buffer[_messagePos++] != 0x01)
+                {
+                    _parseHDLCState = OUTSIDE_FRAME;
+                    ESP_LOGE("hdlc", "Message array start tag (0x01) missing, got (%x), skipping to next frame.", 
+                            _buffer[_messagePos-1]);
+                    return;
+                }
+
+                uint8_t structCount = _buffer[_messagePos++];
+                ESP_LOGD("hdlc", "Number of structs are %d", structCount);
+
+                for (int i=0; i<structCount; i++) 
+                {
+                    if (!parseHDLCStruct())
                     {
-                        parseHDLCState = OUTSIDE_FRAME;
+                        _parseHDLCState = OUTSIDE_FRAME;
+                        ESP_LOGE("hdlc", "Failed to parse structs");
                         return;
                     }
                 }
 
-                _parsedMessage.crcOk = _parsedMessage.telegramComplete = true;
-
-                while ((data = read()) != -1)
-                {
-                    //ESP_LOGD("hdlc", "Read char %02X", data);
-                    if (data == 0x7e)
-                    {
-                        ESP_LOGD("hdlc", "Found end of frame");
-                        parseHDLCState = OUTSIDE_FRAME;
-                        return;
-                    }
-                }
+                _parsedMessage.telegramComplete = true;
             }
         }
 
-        bool P1Reader::readHDLCStruct()
+        bool P1Reader::parseHDLCStruct()
         {
-            if (!read_array((uint8_t*)_buffer, 3))
-                return false;
-
-            if (_buffer[0] != 0x02)
-                return false;
-
             char obis[7];
-            obis[1] = '.';
-            obis[3] = '.';
-            obis[5] = '\0';
-
-            uint8_t struct_len = _buffer[1];
-            //ESP_LOGD("hdlc", "Struct length is %d", struct_len);
-
-            uint8_t tag = _buffer[2];
-
-            if (tag != 0x09)
-            {
-                ESP_LOGE("hdlc", "Unexpected tag %X in struct, bailing out", tag);
-                return false;
-            }
-
-            uint8_t str_length = read();
-            if (read_array((uint8_t*)_buffer, str_length) != str_length)
-            {
-                ESP_LOGE("hdlc", "Unable to read %d bytes of OBIS code", str_length);
-                return false;
-            }
-            _buffer[str_length] = 0; // Null-terminate
-            obis[0] = _buffer[2] + 48;
-            obis[2] = _buffer[3] + 48;
-            obis[4] = _buffer[4] + 48;
-
-            tag = read();
-
+            memset(obis, 0, 7);
             bool is_signed = false;
-            uint32_t uvalue = 0;
+            double scaleFactors[10] = { 0.0001, 0.001, 0.01, 0.1, 1.0,
+                                        10.0, 100.0, 1000.0,
+                                        10000.0, 100000.0 };
+            int8_t scale = 0;
             int32_t value = 0;
-            if (tag == 0x09)
+            uint32_t uvalue = 0xffffffff;
+
+            // Check for start of struct
+            if (_buffer[_messagePos++] != 0x02)
             {
-                str_length = read();
-                if (read_array((uint8_t*)_buffer, str_length) != str_length)
+                _parseHDLCState = OUTSIDE_FRAME;
+                ESP_LOGE("hdlc", "Message struct start tag (0x02) missing, got (%x), skipping to next frame.", 
+                        _buffer[_messagePos-1]);
+                return false;
+            }
+
+            uint8_t structElements = _buffer[_messagePos++];
+            ESP_LOGV("hdlc", "Number of struct elements are %d", structElements);
+
+            for (int i=0; i<structElements; i++) 
+            {
+                if (_messagePos >= _bufferLen)
                 {
-                    ESP_LOGE("hdlc", "Unable to read %d bytes of string", str_length);
+                    _parseHDLCState = OUTSIDE_FRAME;
+                    ESP_LOGE("hdlc", "Reading (%d) past end of message (%d).", 
+                            _messagePos, _bufferLen);
                     return false;
                 }
 
-                _buffer[str_length] = 0;
-                //ESP_LOGD("hdlc", "Read string length %d", str_length);
+                uint8_t tag = _buffer[_messagePos++];
+                switch (tag)
+                {
+                    case 0x02: 
+                        {
+                            // another inner struct
+                            uint8_t innerStructElements = _buffer[_messagePos++];
+                            ESP_LOGV("hdlc", "Number of inner struct elements are %d", innerStructElements);
+
+                            for (int j=0; j<innerStructElements; j++) 
+                            {
+                                uint8_t innerTag = _buffer[_messagePos++];
+                                switch (innerTag)
+                                {
+                                    case 0x0f:
+                                        scale = _buffer[_messagePos++]; // 10E(scale)
+                                        break;
+                                    case 0x16: 
+                                    {
+                                        // Unit
+                                        // 0x1b: (k)W
+                                        // 0x1d: (k)VAr
+                                        // 0x1e: (k)Wh
+                                        // 0x20: (k)VArh
+                                        // 0x21: A
+                                        // 0x23: V
+                                        uint8_t unit = _buffer[_messagePos++];
+                                        if (scale == 0 && unit != 0x21 && unit != 0x23)
+                                            scale = -3; // ref KILO in sensor.py
+                                        break;
+                                    }
+                                    default:
+                                        ESP_LOGE("hdlc", "Unknown tag encountered (%x)", innerTag);
+                                        break;
+                                }
+                            }
+                            break;
+                        }
+                    case 0x06:
+                        uvalue = (uint8_t)_buffer[_messagePos + 3] | 
+                                ((uint8_t)_buffer[_messagePos + 2] << 8) | 
+                                ((uint8_t)_buffer[_messagePos + 1] << 16) | 
+                                ((uint8_t)_buffer[_messagePos] << 24);
+                        _messagePos += 4;
+                        break;
+                    case 0x09:
+                        {
+                            uint8_t rowLen = _buffer[_messagePos++];
+                            if (rowLen == 6)
+                            {
+                                // Map to string for ascii parser
+                                if (_buffer[_messagePos + 2] > 9)
+                                {
+                                    obis[0] = (_buffer[_messagePos + 2] / 10) + 48;
+                                    obis[1] = (_buffer[_messagePos + 2] % 10) + 48;
+                                    obis[3] = _buffer[_messagePos + 3] + 48;
+                                    obis[5] = _buffer[_messagePos + 4] + 48;
+                                    obis[2] = obis[4] = '.';
+                                }
+                                else
+                                {
+                                    obis[0] = _buffer[_messagePos + 2] + 48;
+                                    obis[2] = _buffer[_messagePos + 3] + 48;
+                                    obis[4] = _buffer[_messagePos + 4] + 48;
+                                    obis[1] = obis[3] = '.';
+                                }
+                            }
+                            _messagePos += rowLen;
+                            break;
+                        }
+                    case 0x10:
+                        value = _buffer[_messagePos + 1] | (uint8_t)_buffer[_messagePos + 0] << 8;
+                        _messagePos += 2;
+                        break;
+                    case 0x12:
+                        value = (int16_t)(_buffer[_messagePos + 1] | (uint8_t)_buffer[_messagePos + 0] << 8);
+                        _messagePos += 2;
+                        break;
+                    default:
+                        ESP_LOGE("hdlc", "Unknown tag encountered (%x)", tag);
+                        break;
+                }
             }
-            else if (tag == 0x06)
+
+            if (obis[0] == '\0')
             {
-                read_array((uint8_t*)_buffer, 4);
-                //uvalue = _buffer[0] | _buffer[1] << 8 | _buffer[2] << 16 | _buffer[3] << 24;
-                uvalue = _buffer[3] | _buffer[2] << 8 | _buffer[1] << 16 | _buffer[0] << 24;
-                //ESP_LOGD("hdlc", "Value of uvalue is %u", uvalue);
-            } 
-            else if (tag == 0x10)
-            {
-                read_array((uint8_t*)_buffer, 2); 
-                //value = _buffer[0] | _buffer[1] << 8; // 
-                is_signed = true;
-                value = _buffer[1] | _buffer[0] << 8;
-                //ESP_LOGD("hdlc", "(Signed) Value of value is %d", value);
+                ESP_LOGV("hdlc", "No data found in struct.");
+                return true;
             }
-            else if (tag == 0x12)
-            {
-                read_array((uint8_t*)_buffer, 2); 
-                //uvalue = _buffer[0] | _buffer[1] << 8; // 
-                uvalue = _buffer[1] | _buffer[0] << 8;
-                //ESP_LOGD("hdlc", "(Unsigned) Value of uvalue is %u", uvalue);
-            } 
+
+            double scaledValue;
+            
+            if (uvalue == 0xffffffff)
+                scaledValue = scaleFactors[scale + 4] * value;
             else
-            {
-                ESP_LOGE("hdlc", "unknown tag %X", tag);
-            }
+                scaledValue = scaleFactors[scale + 4] * uvalue;
 
-            int8_t scaler;
-            uint8_t unit;
-            if (struct_len == 3)
-            {
-                read_array((uint8_t*)_buffer, 6);
-                scaler = _buffer[3];
-                unit = _buffer[5];
-                //ESP_LOGD("hdlc", "Scaler %u", scaler);
-                //ESP_LOGD("hdlc", "Unit %d", _buffer[5]);
+            ESP_LOGD("hdlc", "VAL %s, %f, %d\n", obis, scaledValue, scale);
 
-                if (!is_signed)
-                    value = uvalue;
-
-                double scaled_value = pow(10, scaler) * value;
-
-                // Volt and Ampere are the only two units where p1reader.yaml doesn't specify 
-                // we should report in 1/1000, all others should be divided.
-                if(unit != 33 && unit != 35)
-                    scaled_value = scaled_value / 1000;
-                    
-                _parsedMessage.parseRow(obis, scaled_value);
-            }
+            _parsedMessage.parseRow(obis, scaledValue);
 
             return true;
         }

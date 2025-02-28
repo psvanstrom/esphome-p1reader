@@ -49,7 +49,7 @@ namespace esphome
 
             ParsedMessage _parsedMessage = ParsedMessage();
             char _buffer[BUF_SIZE];
-            uint8_t _bufferLen;
+            uint16_t _bufferLen;
             int _uSecondsPerByte;
 
             sensor::Sensor *cumulative_active_import{nullptr};
@@ -100,11 +100,13 @@ namespace esphome
 
             // HLDC
             const int8_t OUTSIDE_FRAME = 0;
-            const int8_t FOUND_FRAME = 1;
+            const int8_t READING_FRAME = 2;
+            const int8_t FOUND_FRAME = 2;
             
-            int8_t parseHDLCState = OUTSIDE_FRAME;
+            int8_t _parseHDLCState = OUTSIDE_FRAME;
+            uint16_t _messagePos;
             
-            bool readHDLCStruct();
+            bool parseHDLCStruct();
 
             // Message read abstraction
             void (P1Reader::*readP1Message)(){nullptr};

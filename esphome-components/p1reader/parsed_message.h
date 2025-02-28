@@ -47,7 +47,7 @@ namespace esphome
             uint16_t crc;
             bool telegramComplete;
             bool crcOk;
-            bool sendBatchOne;
+            uint8_t sensorsToSend;
 
             void parseRow(const char* obisCode, const char* value)
             {
@@ -202,6 +202,14 @@ namespace esphome
                                         100000000000.0};
                 int idx = 0;
                 int intPart = 0;
+                bool negative = false;
+
+                if (value[idx] == '-')
+                {
+                    negative = true;
+                    idx++;
+                }
+
                 while (value[idx] != '.')
                 {
                     intPart = intPart*10 + (value[idx]-'0');
@@ -216,7 +224,14 @@ namespace esphome
                     idx++;
                 }
 
-                return intPart + decPart/decFactors[len-startIdx-1];
+                if (negative)
+                {
+                    return -(intPart + decPart/decFactors[len-startIdx-1]);
+                }
+                else
+                {
+                    return intPart + decPart/decFactors[len-startIdx-1];
+                }
             }
 
             void initNewTelegram()
@@ -224,7 +239,7 @@ namespace esphome
                 crc = 0x0000;
                 telegramComplete = false;
                 crcOk = false;
-                sendBatchOne = true;
+                sensorsToSend = 26;
             }
 
             void updateCrc16(uint8_t a)
