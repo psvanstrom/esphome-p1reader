@@ -137,6 +137,16 @@ uart:
 
 [Sample configuration](./samples/slimmelezer.yaml), uses !secret for all site specific configuration, see below.
 
+### Running on Currently One (v1.1)
+
+Stopgap AB is selling [Currently One](https://currently.one) which can be used with this code and a modified configuration.
+
+It is designed using a ESP32-C3 with the P1 data pin on GPIO6.
+
+This code is ideal for customers who only wants to get their data into Home Assistant, without any cloud service or custom mobile app whatsoever. 
+
+The modified config can be found at [this fork](https://github.com/andreanielsen83/esphome-p1reader).
+
 ## Installation
 
 Clone the repository and create a companion `secrets.yaml` file with the following fields:
