@@ -70,9 +70,6 @@ namespace esphome
 
         void P1Reader::update()
         {
-            static uint32_t call_count = 0;
-            ESP_LOGI("update", "update() call #%d, available=%d", ++call_count, available());
-            
             // Deliver a parsed and crc ok message in the calls _after_ actually reading it so we 
             // split the work over more scheduler slices since publish_state is slow (and logging is slow
             // so set log level INFO to avoid all the debug logging slowing things down)
