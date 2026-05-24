@@ -3,7 +3,7 @@ import esphome.config_validation as cv
 from esphome import pins
 from esphome.components import uart
 from esphome.const import (
-    CONF_UART_ID, CONF_ID
+    CONF_UART_ID, CONF_ID, CONF_UPDATE_INTERVAL
 )
 
 CODEOWNERS = ["cadwal"]
@@ -26,6 +26,7 @@ CONFIG_SCHEMA = cv.All(
             cv.GenerateID(): cv.declare_id(P1Reader),
             cv.Optional(CONF_BUFFER_SIZE, default=60): cv.int_,
             cv.Optional(CONF_PROTOCOL, default="ascii"): cv.string,
+            cv.Optional(CONF_UPDATE_INTERVAL, default="1000ms"): cv.update_interval,
         }
     ).extend(uart.UART_DEVICE_SCHEMA),
     cv.only_with_arduino,
