@@ -382,9 +382,9 @@ namespace esphome
                             _buffer[_bufferLen++] = data;
                         }
 
+                        ESP_LOGD("hdlc", "Found start of frame...");
                         _parseHDLCState = READING_FRAME;
                         break;
-                        ESP_LOGD("hdlc", "Found start of frame...");
                     }
                 }
 
@@ -397,9 +397,9 @@ namespace esphome
 
                         if (data == 0x7e)
                         {
+                            ESP_LOGD("hdlc", "Found end of frame...");
                             _parseHDLCState = FOUND_FRAME;
                             return; // Always parse in a separate timeslot
-                            ESP_LOGD("hdlc", "Found end of frame...");
                         }
 
                         if (_bufferLen >= BUF_SIZE)
