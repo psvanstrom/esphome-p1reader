@@ -36,7 +36,10 @@ namespace esphome
         class P1Reader : public PollingComponent, public uart::UARTDevice
         {
         public:
-            P1Reader(uart::UARTComponent *parent): PollingComponent(), uart::UARTDevice(parent)
+            // Start with an interval > 0ms, we will update it later anyway
+            // ESPHome 2026.4.0 actually makes 0 possible, but breaks everything else
+            // WO in ESPHome2026.4.1
+            P1Reader(uart::UARTComponent *parent): PollingComponent(10), uart::UARTDevice(parent)
             {}
 
             void setup() override;
