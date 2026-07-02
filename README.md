@@ -139,9 +139,18 @@ uart:
 
 ## Installation
 
-Clone the repository and create a companion `secrets.yaml` file with the following fields:
+You don't need to clone this repository. The example [`p1reader.yaml`](./p1reader.yaml) pulls the component straight from GitHub via `external_components`:
 
-Create a companion `secrets.yaml` file with the following fields:
+```yaml
+external_components:
+  - source:
+      type: git
+      url: https://github.com/psvanstrom/esphome-p1reader
+      #ref: main   # pin to a branch or tag (defaults to the repo default branch)
+    refresh: 0s    # always re-fetch on build; raise to e.g. 1d once you're settled
+```
+
+Grab [`p1reader.yaml`](./p1reader.yaml) (or one of the [samples](./samples)) and create a companion `secrets.yaml` file next to it with the following fields:
 ```
 wifi_ssid: <your wifi SSID>
 wifi_password: <your wifi password>
@@ -151,7 +160,9 @@ ota_password: <The OTA password>
 ```
 Check [the Native API Component chapter of the ESPHome documentation](https://esphome.io/components/api.html#configuration-variables) for more info on the encryption key, this page also let you easily generate an encryption key.
 
-Make sure to place the `secrets.yaml` file in the root path of the cloned project. The `fallback_password` and `ota_password` fields can be set to any password before doing the initial upload of the firmware.
+Make sure the `secrets.yaml` file sits in the same folder as the configuration YAML. The `fallback_password` and `ota_password` fields can be set to any password before doing the initial upload of the firmware.
+
+> If you'd rather develop against a local checkout, clone the repo and replace the `source:` block above with `source: ./components` (the path to this repo's `components` folder, relative to your YAML).
 
 If your electricity supplier is using an Aidon 6442SE or Aidon 653X meter, they might still be using the HDLC protocol rather than the ASCII format for the meter data on the P1 port. Use the [Sample configuration for HDLC](./samples/p1reader_hdlc.yaml) to handle this setup. It configures a different input parser to handle the HDLC protocol.
 

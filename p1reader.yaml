@@ -14,9 +14,13 @@ esp8266:
   restore_from_flash: true
 
 external_components:
-  - source: ../esphome-components
-# source: ../esphome-components is a reference to where in your HA config folder you put the contents of that repo folder relative to the YAML file
-# source: github://xxx/esphome-p1reader@main to pull from branch main in the github repo called esphome-p1reader by the user xxx ()
+  - source:
+      type: git
+      url: https://github.com/psvanstrom/esphome-p1reader
+      #ref: main   # pin to a branch or tag (defaults to the repo default branch)
+    refresh: 0s    # always re-fetch on build; raise to e.g. 1d once you're settled
+# To develop against a local checkout instead, replace the source above with:
+#   - source: ./components   # path to this repo's components folder, relative to the YAML file
 
 wifi:
   ssid: !secret wifi_ssid
