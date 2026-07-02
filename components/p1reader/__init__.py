@@ -24,7 +24,7 @@ CONFIG_SCHEMA = cv.All(
         {
             cv.GenerateID(): cv.declare_id(P1Reader),
             cv.Optional(CONF_BUFFER_SIZE, default=60): cv.positive_not_null_int,
-            cv.Optional(CONF_PROTOCOL, default="ascii"): cv.string,
+            cv.Optional(CONF_PROTOCOL, default="ascii"): cv.one_of("ascii", "hdlc", lower=True),
         }
     ).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA),
     cv.only_with_arduino,
