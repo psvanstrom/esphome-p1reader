@@ -26,9 +26,8 @@ CONFIG_SCHEMA = cv.All(
             cv.GenerateID(): cv.declare_id(P1Reader),
             cv.Optional(CONF_BUFFER_SIZE, default=60): cv.int_,
             cv.Optional(CONF_PROTOCOL, default="ascii"): cv.string,
-            cv.Optional(CONF_UPDATE_INTERVAL, default="100ms"): cv.update_interval
         }
-    ).extend(uart.UART_DEVICE_SCHEMA),
+    ).extend(cv.polling_component_schema("100ms")).extend(uart.UART_DEVICE_SCHEMA),
     cv.only_with_arduino,
 )
 
