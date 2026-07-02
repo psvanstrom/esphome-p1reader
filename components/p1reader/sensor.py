@@ -6,6 +6,7 @@ from esphome.const import (
     DEVICE_CLASS_CURRENT,
     DEVICE_CLASS_ENERGY,
     DEVICE_CLASS_POWER,
+    DEVICE_CLASS_REACTIVE_ENERGY,
     DEVICE_CLASS_REACTIVE_POWER,
     DEVICE_CLASS_VOLTAGE,
     STATE_CLASS_MEASUREMENT,
@@ -32,10 +33,10 @@ def energy_schema():
 
 
 def reactive_energy_schema():
-    # No dedicated device class exists for reactive energy in Home Assistant
     return sensor.sensor_schema(
         unit_of_measurement=UNIT_KILOVOLT_AMPS_REACTIVE_HOURS,
         accuracy_decimals=3,
+        device_class=DEVICE_CLASS_REACTIVE_ENERGY,
         state_class=STATE_CLASS_TOTAL_INCREASING,
     )
 
