@@ -588,11 +588,13 @@ namespace esphome
                             break;
                         }
                     case 0x10:
-                        value = _buffer[_messagePos + 1] | (uint8_t)_buffer[_messagePos + 0] << 8;
+                        // Signed 16-bit. Mask both bytes to avoid signed-char sign
+                        // extension polluting the upper bits, then cast to recover sign.
+                        value = (int16_t)(((uint8_t)_buffer[_messagePos + 0] << 8) | (uint8_t)_buffer[_messagePos + 1]);
                         _messagePos += 2;
                         break;
                     case 0x12:
-                        value = (int16_t)(_buffer[_messagePos + 1] | (uint8_t)_buffer[_messagePos + 0] << 8);
+                        value = (int16_t)(((uint8_t)_buffer[_messagePos + 0] << 8) | (uint8_t)_buffer[_messagePos + 1]);
                         _messagePos += 2;
                         break;
                     default:
