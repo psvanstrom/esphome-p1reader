@@ -1,6 +1,5 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome import pins
 from esphome.components import uart
 from esphome.const import (
     CONF_UART_ID, CONF_ID
@@ -11,7 +10,7 @@ CODEOWNERS = ["cadwal"]
 MULTI_CONF = True
 
 DEPENDENCIES = ["uart"]
-AUTO_LOAD = ["sensor", "text_sensor"]
+AUTO_LOAD = ["sensor"]
 
 CONF_P1READER_ID = "p1reader_id"
 CONF_BUFFER_SIZE = "buffer_size"
@@ -24,10 +23,10 @@ CONFIG_SCHEMA = cv.All(
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(P1Reader),
-            cv.Optional(CONF_BUFFER_SIZE, default=60): cv.int_,
-            cv.Optional(CONF_PROTOCOL, default="ascii"): cv.string,
+            cv.Optional(CONF_BUFFER_SIZE, default=60): cv.positive_not_null_int,
+            cv.Optional(CONF_PROTOCOL, default="ascii"): cv.one_of("ascii", "hdlc", lower=True),
         }
-    ).extend(uart.UART_DEVICE_SCHEMA),
+    ).extend(cv.COMPONENT_SCHEMA).extend(uart.UART_DEVICE_SCHEMA),
     cv.only_with_arduino,
 )
 
