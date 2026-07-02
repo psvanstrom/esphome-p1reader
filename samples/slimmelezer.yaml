@@ -14,8 +14,13 @@ esp8266:
   restore_from_flash: true
 
 external_components:
-  - source: ../esphome-components
-  
+  - source:
+      type: git
+      url: https://github.com/psvanstrom/esphome-p1reader
+      #ref: main   # pin to a branch or tag (defaults to the repo default branch)
+    refresh: 0s    # always re-fetch on build; raise to e.g. 1d once you're settled
+
+
 wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password

@@ -1,11 +1,25 @@
 # esphome-p1reader
-ESPHome custom component for reading P1 data from electricity meters. Designed for Swedish meters that implement the specification defined in the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) version 1.3 and above.
 
-## ESPHome version
-The current version in main is tested with ESPHome version `2024.12.4` and `2025.2.0`. Make sure your ESPHome version is up to date if you experience compile problems.
-(NOTE: This component is now an External Component as the Custom Components API have been removed from ESPHome)
+An [ESPHome](https://esphome.io/) external component for reading P1 data from smart electricity meters and exposing it to Home Assistant. It is designed for Swedish meters that implement the [Swedish Energy Industry Recommendation For Customer Interfaces](https://www.energiforetagen.se/forlag/elnat/branschrekommendation-for-lokalt-kundgranssnitt-for-elmatare/) (version 1.3 and above).
 
-## Verified meter hardware / supplier
+It handles both the **ASCII** telegram format (most meters) and the binary **HDLC** format (used by some Aidon meters).
+
+> [!NOTE]
+> This is now an ESPHome **External Component** (the old Custom Components API was removed from ESPHome). The current `main` is tested with ESPHome `2026.6.4` — make sure your ESPHome is up to date if you run into compile problems.
+
+## Contents
+
+- [Verified meters](#verified-meters)
+- [Hardware](#hardware)
+- [Installation](#installation)
+- [Verifying the output](#verifying-the-output)
+- [Running on other boards](#running-on-other-boards)
+- [Technical documentation](#technical-documentation)
+
+## Verified meters
+
+The following meter / supplier combinations have been verified to work:
+
 * [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2_.pdf) / Ellevio & Skånska Energi ([Info, port activation, etc.](https://www.ellevio.se/privat/om-din-el/elen-i-hemmet/forsta-din-elmatare/))
 * [Landis+Gyr E360](https://eu.landisgyr.com/blog-se/e360-en-smart-matare-som-optimerarden-totala-agandekostnaden)
 * [Itron A300](https://boraselnat.se/elnat/elmatarbyte-2020-2021/sa-har-fungerar-din-nya-elmatare/) / Borås Elnät
@@ -15,153 +29,106 @@ The current version in main is tested with ESPHome version `2024.12.4` and `2025
 * [Aidon](https://www.tekniskaverken.se/kundservice/dinamatare/snart-far-du-nya-matare/) / Tekniska Verken
 * [Kamstrup Omnia](https://www.goteborgenergi.se/kundservice/elmatarbyte/sa-fungerar-din-elmatare) / Göteborgs Energi
 
-*Note:* There's a bug in older E360 firmware, causing it to stop sending out data after a while. Check this comment for more info: https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020
-  
-*Warning:*  Do not confuse KAIFA MA304H4**E** with MA304H4**D** as the latter uses M-Bus instead of P1. Apart from being incompatible protocols, M-Bus pin 1 exerts 27V instead of 5V and will fry your P1 equipment.
+> [!NOTE]
+> There's a bug in older Landis+Gyr E360 firmware causing it to stop sending out data after a while. See [this comment](https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020) for more info.
+
+> [!WARNING]
+> Do not confuse the KAIFA MA304H4**E** with the MA304H4**D** — the latter uses M-Bus instead of P1. Apart from being incompatible protocols, M-Bus pin 1 carries 27V instead of 5V and will fry your P1 equipment.
 
 ## Hardware
-I have used an ESP-12 based NodeMCU for my circuit, another alternative is the cheaper Wemos D1 mini but most ESP-based controllers would probably work. The P1 port on the meter provides 5V up to 250mA which makes it possible to power the circuit directly from the P1 port.
+
+This project uses an ESP-12 based NodeMCU, but a cheaper Wemos D1 mini — or most other ESP-based controllers — will also work. The P1 port on the meter provides 5V at up to 250mA, which is enough to power the circuit directly from the P1 port.
 
 ### Parts
+
 - 1 NodeMCU, Wemos D1 mini or equivalent ESP-12 / ESP-32 microcontroller
 - 1 BC547 / 2N3904 NPN transistor
-- 1 4.7kOhm Resistor
-- 1 10kOhm Resistor
+- 1 4.7kOhm resistor
+- 1 10kOhm resistor
 - 1 RJ12 6P6C port
 - 1 RJ12 to RJ12 cable (6 wires)
 
 ### Wiring
-The circuit is very simple, basically the 5V TX output on the P1 connector is converted to 3.3V and inverted by the transistor and connected to the UART0 RX pin on the microcontroller. The RTS (request to send) pin is pulled high so that data is sent continuously and GND and 5V are taken from the P1 connector to drive the microcontroller.
 
-#### Wiring NodeMCU ESP-12
+The circuit is very simple: the 5V TX output on the P1 connector is inverted and level-shifted to 3.3V by the transistor and connected to the UART0 RX pin on the microcontroller. The RTS (request to send) pin is pulled high so that data is sent continuously, and GND and 5V are taken from the P1 connector to power the microcontroller.
+
+> [!TIP]
+> **You no longer need the transistor just to invert the signal.** Since this component was first written, ESPHome added software signal inversion via `inverted: true` on the `rx_pin` (see the [UART documentation](https://esphome.io/components/uart/)). Because the P1 data line is open-collector, on many meters you can skip the inverting transistor entirely and instead add a pull-up resistor from RX to 3.3V and set `inverted: true` in the config — this is exactly the [ESP32 wiring](#esp32) shown below.
+>
+> If you *do* build the transistor circuit below, leave `inverted: true` **off** — the hardware already inverts the signal, and enabling software inversion as well would cancel it out.
+
+#### NodeMCU ESP-12
 ![Wiring Diagram](images/wiring.png)
 
-#### Wiring Wemos D1 mini
+#### Wemos D1 mini
 ![image](https://user-images.githubusercontent.com/5547521/132756141-53941ed7-64f6-4c83-b0b0-6fc7c9634752.png)
 
-#### Wiring barebone ESP-12 with added voltage regulators and capacitors.
-The schematics show a 2SC1815 NPN transistor being used (because that's what I had laying around), will work just fine with either one of the transistors listed under the parts section. 
+#### Barebone ESP-12 with voltage regulators and capacitors
+The schematic shows a 2SC1815 NPN transistor (that's what was on hand); either transistor listed in the parts section works fine.
 ![Wiring Diagram](images/p1reader-barebone-ESP-12F.png)
 
-### PCB and enclosures
-#### Naesstrom
-[Naesstrom](https://github.com/Naesstrom) has made a nice PCB layout for the P1 reader using a Wemos D1 mini as the controller along with a 3D printable enclosure. 
+### PCBs and enclosures
 
-Check out the PCB here: https://oshwlab.com/Naesstrom/esphome-p1reader and the enclosure here: https://www.thingiverse.com/thing:4961372.
+Community-made boards you can build on:
 
-<p float="left">
-    <img src="https://user-images.githubusercontent.com/5547521/128576100-648cd2b7-d728-4d8b-90be-46f7498d8136.png" height="300" />
-    <img src="https://user-images.githubusercontent.com/5547521/132759466-f92bf190-ebaa-401d-bb54-330df5ba3ae0.png" height="300" /> 
-</p>
+- **[Naesstrom](https://github.com/Naesstrom)** — a PCB for the Wemos D1 mini with a 3D-printable enclosure. [PCB](https://oshwlab.com/Naesstrom/esphome-p1reader) · [enclosure](https://www.thingiverse.com/thing:4961372).
 
-#### EHjortberg
-[EHjortberg](https://github.com/ehjortberg) has made an equally nice PCB layout based on an ESP07 module along with a 3D printable enclosure. Check it out here: https://github.com/ehjortberg/kicad-p1-port-thingie.
+  <p float="left">
+      <img src="https://user-images.githubusercontent.com/5547521/128576100-648cd2b7-d728-4d8b-90be-46f7498d8136.png" height="300" />
+      <img src="https://user-images.githubusercontent.com/5547521/132759466-f92bf190-ebaa-401d-bb54-330df5ba3ae0.png" height="300" />
+  </p>
 
-<p float="left">
-  <img src="https://github.com/ehjortberg/kicad-p1-port-thingie/raw/master/images/p1-port-thingie-photo.jpg" width="400">
-</p>
+- **[EHjortberg](https://github.com/ehjortberg)** — a PCB based on an ESP07 module with a 3D-printable enclosure. [Details](https://github.com/ehjortberg/kicad-p1-port-thingie).
 
-## Alternate hardware
-
-Since most of the actual specification is, for all practical purposes, identical across Europe/EU (with the exception of Norway) we can use many kinds of different hardware that supports ESPHome and can interface with the P1 port. Both other custom made solutions and some commercial options. The key to using them is to combine them with the code here that handles the Swedish selection of data values sent from the smart meter. The DSMR module in ESPHome follows the Dutch specification for values to be used.
-
-(Finland and Denmark seems to have the exact same configuration as Sweden)
-
-### Running on ESP32
-
-The ESP32 requires an external power supply since it cannot be powered by the low amperage available from the P1-port itself. Using the hardware UART on GPIO3 is required.
-
-Use a pull-up resistor (1k) from RXD to 3V3.
-
-```
-uart:
-    id: uart_bus
-    rx_pin:
-      number: GPIO3
-      inverted: true
-    baud_rate: 115200
-```
-
-![image](https://user-images.githubusercontent.com/36197/199937760-c6dce355-1e69-4b78-ae04-e2f6c9b2241e.png)
-
-Image credit: https://github.com/Josverl/micropython-p1meter
-
-### Running on SmartyReader P1
-
-Weigu has designed [SmartyReader P1](http://weigu.lu/microcontroller/smartyReader_P1/index.html) that also can be running with this code and configuration with a few small adaptions.
-
-This hardware runs on ESP8266 Wemos D1 mini pro but with less components.
-
-#### Basic steps to run this code on SmartyReader P1:
-
-1. Set the board to Wemos D1 mini pro
-```
-board: d1_mini_pro
-```
-
-2. Adjust the UART section to invert the RX pin (removed TX pin config since it is not used).
-```
-uart:
-    id: uart_bus
-    rx_pin:
-      number: 3
-      inverted: true
-    baud_rate: 115200
-```
-
-~~Note that the inverted flag is only supported in ESPHome beta as of now.~~
-~~Monitor [this PR](https://github.com/esphome/esphome/pull/1727) to follow if it is released to general version.~~
-_inverted flag feature has been added in ESPHome 2021.12.0 released on 11th December 2021._
-
-### Running on Slimmelezer(+)
-
-Marcel Zuidwijk has designed [Slimmelezer+](https://www.zuidwijk.com/product/slimmelezer-plus/) that also can be used with this code and combined with the standard configuration for the Slimmelezer+. (Also the non + version works fine, the software is compatible).
-
-It is designed as a custom board with a P1 interface that is software equivalent with the Wemos D1 Mini.
-
-#### Basic steps to run this code on the Slimmelezer+:
-
-1. Set the board to Wemos D1 mini
-```
-board: d1_mini
-```
-
-2. Adjust the UART section to set the rx_pin used by the Slimmelezer
-```
-uart:
-    id: uart_bus
-    baud_rate: 115200
-    rx_pin: D7
-    rx_buffer_size: 3072    
-```
-
-[Sample configuration](./samples/slimmelezer.yaml), uses !secret for all site specific configuration, see below.
+  <p float="left">
+    <img src="https://github.com/ehjortberg/kicad-p1-port-thingie/raw/master/images/p1-port-thingie-photo.jpg" width="400">
+  </p>
 
 ## Installation
 
-Clone the repository and create a companion `secrets.yaml` file with the following fields:
+You don't need to clone this repository. The example [`p1reader.yaml`](./p1reader.yaml) pulls the component straight from GitHub via `external_components`:
 
-Create a companion `secrets.yaml` file with the following fields:
+```yaml
+external_components:
+  - source:
+      type: git
+      url: https://github.com/psvanstrom/esphome-p1reader
+      #ref: main   # pin to a branch or tag (defaults to the repo default branch)
+    refresh: 0s    # always re-fetch on build; raise to e.g. 1d once you're settled
 ```
+
+**1. Get the config and secrets.** Grab [`p1reader.yaml`](./p1reader.yaml) (or one of the [samples](./samples)) and create a companion `secrets.yaml` file next to it:
+
+```yaml
 wifi_ssid: <your wifi SSID>
 wifi_password: <your wifi password>
 fallback_password: <fallback AP password>
-encryption_key: the encryption key shared with HA
-ota_password: <The OTA password>
+encryption_key: <the encryption key shared with Home Assistant>
+ota_password: <the OTA password>
 ```
-Check [the Native API Component chapter of the ESPHome documentation](https://esphome.io/components/api.html#configuration-variables) for more info on the encryption key, this page also let you easily generate an encryption key.
 
-Make sure to place the `secrets.yaml` file in the root path of the cloned project. The `fallback_password` and `ota_password` fields can be set to any password before doing the initial upload of the firmware.
+See the [Native API Component documentation](https://esphome.io/components/api.html#configuration-variables) for more on the encryption key (that page can also generate one for you). The `fallback_password` and `ota_password` can be any password you choose before the first upload.
 
-If your electricity supplier is using an Aidon 6442SE or Aidon 653X meter, they might still be using the HDLC protocol rather than the ASCII format for the meter data on the P1 port. Use the [Sample configuration for HDLC](./samples/p1reader_hdlc.yaml) to handle this setup. It configures a different input parser to handle the HDLC protocol.
+> [!TIP]
+> If your supplier uses an **Aidon 6442SE** or **Aidon 653X** meter, it may still send data in the HDLC protocol rather than ASCII. Start from the [HDLC sample configuration](./samples/p1reader_hdlc.yaml), which selects the HDLC parser.
 
-Prepare the microcontroller with ESPHome before you connect it to the circuit:
-- Install the `esphome` [command line tool](https://esphome.io/guides/getting_started_command_line.html)
-- Plug in the microcontroller to your USB port and run `esphome run p1reader.yaml` to flash the firmware
-- Remove the USB connection and connect the microcontroller to the rest of the circuit and plug it into the P1 port.
-- If everything works, your Home Assistant will now auto detect your new ESPHome integration.
+**2. Flash the firmware** (do this before connecting the board to the circuit):
 
-You can check the logs by issuing `esphome p1reader.yaml logs` (or use the super awesome ESPHome dashboard available as a Hass.io add-on or standalone). The logs should output data similar to this every 10 seconds when using `DEBUG` loglevel:
+- Install the `esphome` [command line tool](https://esphome.io/guides/getting_started_command_line.html).
+- Plug the microcontroller into your USB port and run `esphome run p1reader.yaml`.
+- Disconnect USB, wire the microcontroller into the rest of the circuit, and plug it into the P1 port.
+- Once it's running, Home Assistant will auto-detect the new ESPHome integration.
+
+> [!NOTE]
+> To develop against a local checkout instead, clone the repo and replace the `source:` block above with `source: ./components` (the path to this repo's `components` folder, relative to your YAML).
+
+## Verifying the output
+
+Check the logs with `esphome p1reader.yaml logs` (or use the ESPHome dashboard, available as a Home Assistant add-on or standalone). At the `DEBUG` log level you should see a telegram similar to the following roughly every 10 seconds:
+
+<details>
+<summary>Example log output</summary>
+
 ```
 [18:40:01][D][data:264]: /ELL5\253833635_A
 [18:40:01][D][data:264]:
@@ -196,36 +163,85 @@ You can check the logs by issuing `esphome p1reader.yaml logs` (or use the super
 [18:40:01][I][crc:275]: Telegram read. CRC: 7945 = 7945. PASS = YES
 ```
 
-Note that the default is the `INFO` loglevel since logging affects performance.
+</details>
 
-The last row contains the CRC check. If you constantly get invalid CRC there might be something wrong with the serial communication.
+The default log level is `INFO`, since logging affects performance. The last row of each telegram contains the CRC check — if you constantly get invalid CRCs, there is likely something wrong with the serial communication.
+
+## Running on other boards
+
+Because the underlying P1 specification is, for practical purposes, identical across most of Europe/EU (Norway being the exception), this component works with many kinds of ESPHome-capable hardware — both DIY and commercial. The trick is to combine that hardware with the code here, which handles the Swedish selection of data values. (ESPHome's built-in DSMR component follows the Dutch specification instead.) Finland and Denmark appear to use the same configuration as Sweden.
+
+### ESP32
+
+The ESP32 needs an external power supply, as it can't run off the low current available from the P1 port. Use the hardware UART on GPIO3, with a 1k pull-up resistor from RXD to 3V3.
+
+```yaml
+uart:
+  id: uart_bus
+  rx_pin:
+    number: GPIO3
+    inverted: true
+  baud_rate: 115200
+```
+
+![image](https://user-images.githubusercontent.com/36197/199937760-c6dce355-1e69-4b78-ae04-e2f6c9b2241e.png)
+
+Image credit: https://github.com/Josverl/micropython-p1meter
+
+### SmartyReader P1
+
+Weigu's [SmartyReader P1](http://weigu.lu/microcontroller/smartyReader_P1/index.html) runs this code with a few small adaptions. It's based on an ESP8266 Wemos D1 mini pro with fewer components.
+
+1. Set the board:
+
+   ```yaml
+   esp8266:
+     board: d1_mini_pro
+   ```
+
+2. Invert the RX pin (the TX pin isn't used):
+
+   ```yaml
+   uart:
+     id: uart_bus
+     rx_pin:
+       number: 3
+       inverted: true
+     baud_rate: 115200
+   ```
+
+The `inverted` flag has been available since ESPHome 2021.12.0.
+
+### Slimmelezer(+)
+
+Marcel Zuidwijk's [Slimmelezer+](https://www.zuidwijk.com/product/slimmelezer-plus/) is a custom board with a P1 interface that is software-equivalent to the Wemos D1 mini, so this code runs on it directly. (The non-`+` version works too.)
+
+1. Set the board:
+
+   ```yaml
+   esp8266:
+     board: d1_mini
+   ```
+
+2. Set the RX pin used by the Slimmelezer:
+
+   ```yaml
+   uart:
+     id: uart_bus
+     baud_rate: 115200
+     rx_pin: D7
+     rx_buffer_size: 3072
+   ```
+
+See the [Slimmelezer sample configuration](./samples/slimmelezer.yaml), which uses `!secret` for all site-specific configuration (see [Installation](#installation)).
 
 ## Technical documentation
-Specification overview:
-https://www.tekniskaverken.se/siteassets/tekniska-verken/elnat/elmatare-och-elanvandning/aidon-rj12-han-interface-v17a.pdf
 
-- OBIS codes:
-https://tech.enectiva.cz/en/installation-instructions/others/obis-codes-meaning/
-
-- P1 hardware info (in Dutch):
-http://domoticx.com/p1-poort-slimme-meter-hardware/
-
-- Original Dutch specification (P1 Companion Standard - DSMR 5.0.2).
-https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
-
-- Luxembourg specification (E-Meter P1 Specification 1.1.2)
-https://www.luxmetering.lu/pdf/SPEC%20-%20E-Meter_P1_specification_20210308.pdf
-
-- Belgian specification
-https://www.fluvius.be/sites/fluvius/files/2020-03/1901-fluvius-technical-specification-user-ports-digital-meter.pdf
-https://www.fluvius.be/sites/fluvius/files/2019-12/e-mucs_h_ed_1_3.pdf
-
-- Swedish specification (Branschrekommendation för lokalt kundgränssnitt för elmätare 2.0)
-https://www.energiforetagen.se/globalassets/energiforetagen/det-erbjuder-vi/kurser-och-konferenser/elnat/branschrekommendation-lokalt-granssnitt-v2_0-201912.pdf
-
-- In Lithuania Dutch specification is used (in Lithuanian):
-  https://ismaniejiskaitikliai.lt/dazniausiai-uzduodami-klausimai/1#c-8/t-74
- 
-
-
-
+- Specification overview: https://www.tekniskaverken.se/siteassets/tekniska-verken/elnat/elmatare-och-elanvandning/aidon-rj12-han-interface-v17a.pdf
+- OBIS codes: https://tech.enectiva.cz/en/installation-instructions/others/obis-codes-meaning/
+- P1 hardware info (in Dutch): http://domoticx.com/p1-poort-slimme-meter-hardware/
+- Original Dutch specification (P1 Companion Standard – DSMR 5.0.2): https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
+- Luxembourg specification (E-Meter P1 Specification 1.1.2): https://www.luxmetering.lu/pdf/SPEC%20-%20E-Meter_P1_specification_20210308.pdf
+- Belgian specification: https://www.fluvius.be/sites/fluvius/files/2020-03/1901-fluvius-technical-specification-user-ports-digital-meter.pdf and https://www.fluvius.be/sites/fluvius/files/2019-12/e-mucs_h_ed_1_3.pdf
+- Swedish specification (Branschrekommendation för lokalt kundgränssnitt för elmätare 2.0): https://www.energiforetagen.se/globalassets/energiforetagen/det-erbjuder-vi/kurser-och-konferenser/elnat/branschrekommendation-lokalt-granssnitt-v2_0-201912.pdf
+- Lithuania uses the Dutch specification (in Lithuanian): https://ismaniejiskaitikliai.lt/dazniausiai-uzduodami-klausimai/1#c-8/t-74
