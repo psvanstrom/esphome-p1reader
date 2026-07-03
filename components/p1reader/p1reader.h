@@ -50,6 +50,10 @@ namespace esphome
             // Shared
             int _pollingIntervalMs;
 
+            // When true, every byte read from the meter is echoed out the TX pin
+            // so a second P1 device can share the port (see set_repeat_to_tx).
+            bool _repeatToTx{false};
+
             ParsedMessage _parsedMessage = ParsedMessage();
             char _buffer[BUF_SIZE];
             uint16_t _bufferLen;
@@ -101,6 +105,10 @@ namespace esphome
 
             size_t readBytesUntilAndIncluding(char terminator, char *buffer, size_t length);
 
+            // Reads a single byte from the meter, echoing it out the TX pin when
+            // repeater mode is enabled. Returns false when no byte was available.
+            bool readByteRepeat(uint8_t *data);
+
             // HLDC
             const int8_t OUTSIDE_FRAME = 0;
             const int8_t READING_FRAME = 2;
@@ -126,6 +134,11 @@ namespace esphome
                     readP1Message = &esphome::p1_reader::P1Reader::readP1MessageHDLC;
 
                 ESP_LOGI("setup", "Protocol is %s", protocol.c_str());
+            }
+
+            void set_repeat_to_tx(bool enabled)
+            {
+                _repeatToTx = enabled;
             }
 
             void set_sensor_cumulative_active_import(sensor::Sensor *sensor)
