@@ -216,6 +216,8 @@ Image credit: https://github.com/Josverl/micropython-p1meter
 
 The [Seeed Studio XIAO ESP32C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/) is a tiny ESP32-C3 board that runs this code with just a single 4.7kOhm pull-up resistor from RX to 3V3. It has been reported stable over several days of use (see [issue #73](https://github.com/psvanstrom/esphome-p1reader/issues/73)).
 
+<img width="822" height="243" alt="image" src="https://github.com/user-attachments/assets/ef7937a7-c700-4461-83e9-d34893ba357b" />
+
 Use `board: esp32-c3-devkitm-1` and read on GPIO20 (labelled D7 / RX on the board):
 
 ```yaml
