@@ -15,6 +15,7 @@ It handles both the **ASCII** telegram format (most meters) and the binary **HDL
 - [Verifying the output](#verifying-the-output)
 - [Controlling the update frequency](#controlling-the-update-frequency)
 - [Running on other boards](#running-on-other-boards)
+- [Sharing the port with a second device (repeater)](#sharing-the-port-with-a-second-device-repeater)
 - [Technical documentation](#technical-documentation)
 
 ## Verified meters
@@ -257,6 +258,20 @@ Marcel Zuidwijk's [Slimmelezer+](https://www.zuidwijk.com/product/slimmelezer-pl
    ```
 
 See the [Slimmelezer sample configuration](./samples/slimmelezer.yaml), which uses `!secret` for all site-specific configuration (see [Installation](#installation)).
+
+## Sharing the port with a second device (repeater)
+
+The component can act as an active repeater: with `repeat_to_tx: true`, every byte it reads from the meter is echoed straight out the UART **TX** pin, so a second P1 device (e.g. a Tibber Pulse) can share a single P1 port without an active splitter.
+
+```yaml
+p1reader:
+  - id: p1reader_esp
+    uart_id: uart_bus
+    repeat_to_tx: true
+```
+
+> [!WARNING]
+> This requires additional hardware and is **off by default**. The TX pin needs the same treatment as RX — the ESP's 3.3 V output must be **inverted and level-shifted to a 5 V open-collector signal** (a second transistor stage, mirroring the RX circuit); wiring TX directly to the second device will not work reliably. Make sure your `uart:` also defines a `tx_pin`. Note too that the P1 port's ~250 mA supply may not be enough to power both the ESP and a second device — the second device may need its own supply. The hardware side is your responsibility; the option only handles echoing the data stream.
 
 ## Technical documentation
 
