@@ -13,6 +13,7 @@ It handles both the **ASCII** telegram format (most meters) and the binary **HDL
 - [Hardware](#hardware)
 - [Installation](#installation)
 - [Verifying the output](#verifying-the-output)
+- [Controlling the update frequency](#controlling-the-update-frequency)
 - [Running on other boards](#running-on-other-boards)
 - [Technical documentation](#technical-documentation)
 
@@ -166,6 +167,28 @@ Check the logs with `esphome p1reader.yaml logs` (or use the ESPHome dashboard, 
 </details>
 
 The default log level is `INFO`, since logging affects performance. The last row of each telegram contains the CRC check — if you constantly get invalid CRCs, there is likely something wrong with the serial communication.
+
+## Controlling the update frequency
+
+Sensor values are published **once per telegram received from the meter**, so the update rate is set by how often your meter sends data — typically every 1–10 seconds depending on the meter and its firmware. The component's polling interval is auto-tuned from the baud rate and `rx_buffer_size` purely so it can keep up with the incoming bytes; it is **not** a way to slow down updates (forcing it slower just causes buffer overflows and CRC errors).
+
+To reduce how often values reach Home Assistant, add a standard ESPHome [sensor filter](https://esphome.io/components/sensor/#sensor-filters) to the sensors you care about:
+
+```yaml
+sensor:
+  - platform: p1reader
+    p1reader_id: p1reader_esp
+    momentary_active_import:
+      name: "Momentary Active Import"
+      filters:
+        - throttle_average: 10s   # average over 10s, then publish once
+    cumulative_active_import:
+      name: "Cumulative Active Import"
+      filters:
+        - throttle: 10s           # simply drop intermediate values
+```
+
+Use `throttle_average` for instantaneous values (power, current, voltage) and `throttle` for cumulative meter totals. Apply the filter to each sensor you want to slow down.
 
 ## Running on other boards
 
