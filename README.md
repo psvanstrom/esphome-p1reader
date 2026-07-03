@@ -212,6 +212,33 @@ uart:
 
 Image credit: https://github.com/Josverl/micropython-p1meter
 
+### Seeed Studio XIAO ESP32C3
+
+The [Seeed Studio XIAO ESP32C3](https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/) is a tiny ESP32-C3 board that runs this code with just a single 4.7kOhm pull-up resistor from RX to 3V3. It has been reported stable over several days of use (see [issue #73](https://github.com/psvanstrom/esphome-p1reader/issues/73)).
+
+Use `board: esp32-c3-devkitm-1` and read on GPIO20 (labelled D7 / RX on the board):
+
+```yaml
+esp32:
+  board: esp32-c3-devkitm-1
+  variant: esp32c3
+  framework:
+    type: arduino
+
+uart:
+  id: uart_bus
+  baud_rate: 115200
+  rx_pin:
+    number: GPIO20   # D7 / RX
+    inverted: true
+```
+
+> [!NOTE]
+> Do **not** use `board: seeed_xiao_esp32c3`, as it fails to compile. Use `esp32-c3-devkitm-1` as shown above.
+
+> [!TIP]
+> The XIAO already has ~4.5µF on its 5V input, so don't add extra capacitance there. Extra capacitance can cause cold-boot problems on a low-current source like the P1 port.
+
 ### SmartyReader P1
 
 Weigu's [SmartyReader P1](http://weigu.lu/microcontroller/smartyReader_P1/index.html) runs this code with a few small adaptions. It's based on an ESP8266 Wemos D1 mini pro with fewer components.
