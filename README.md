@@ -5,7 +5,7 @@ An [ESPHome](https://esphome.io/) external component for reading P1 data from sm
 It handles both the **ASCII** telegram format (most meters) and the binary **HDLC** format (used by some Aidon meters).
 
 > [!NOTE]
-> This is now an ESPHome **External Component** (the old Custom Components API was removed from ESPHome). The current `main` is tested with ESPHome `2026.6.4`. Make sure your ESPHome is up to date if you run into compile problems.
+> The current `main` is tested with ESPHome `2026.6.4`. Make sure your ESPHome is up to date if you run into compile problems.
 
 ## Contents
 
