@@ -22,13 +22,13 @@ It handles both the **ASCII** telegram format (most meters) and the binary **HDL
 
 The following meter / supplier combinations have been verified to work:
 
-* [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2_.pdf) / Ellevio & Skånska Energi ([Info, port activation, etc.](https://www.ellevio.se/privat/om-din-el/elen-i-hemmet/forsta-din-elmatare/))
-* [Landis+Gyr E360](https://eu.landisgyr.com/blog-se/e360-en-smart-matare-som-optimerarden-totala-agandekostnaden)
-* [Itron A300](https://boraselnat.se/elnat/elmatarbyte-2020-2021/sa-har-fungerar-din-nya-elmatare/) / Borås Elnät
-* [S34U18 (Sanxing SX631)](https://www.vattenfalleldistribution.se/globalassets/vattenfalleldistribution/kund-i-elnatet/matarbyte/nya-elmataren/vattenfall-eldistribution_anvandarmanual-elmatare.pdf) / Vattenfall
-* [KAIFA MA304H4E](https://reko.nackaenergi.se/elmatarbyte/) / Nacka Energi
-* [KAIFA CL109](https://www.oresundskraft.se/dags-for-matarbyte/) / Öresundskraft
-* [Aidon](https://www.tekniskaverken.se/kundservice/dinamatare/snart-far-du-nya-matare/) / Tekniska Verken
+* [Sagemcom T211](https://www.ellevio.se/globalassets/content/el/elmatare-produktblad-b2c/ellevio_produktblad_fas3_t211_web2.pdf) / Ellevio & Skånska Energi ([Info, port activation, etc.](https://www.ellevio.se/privat/om-din-el/elen-i-hemmet/forsta-din-elmatare/))
+* [Landis+Gyr E360](https://www.landisgyr.eu/product/landisgyr-e360/)
+* [Itron A300](https://natkraftboras.se/elnat/elnatsavtal/din-elmatare/) / Borås Elnät
+* [S34U18 (Sanxing SX631)](https://www.vattenfalleldistribution.se/globalassets/1.-privat/elnatsanslutning/matarbyte/nya-elmataren/vattenfall-eldistribution-anvandarmanual-elmatare-vers.-1.05.pdf) / Vattenfall
+* [KAIFA MA304H4E](https://www.nackaenergi.se/elnat/sa-fungerar-din-elmatare) / Nacka Energi
+* [KAIFA CL109](https://www.oresundskraft.se/globalassets/pdf/matarbyte/matarmanual_utokad.pdf) / Öresundskraft
+* [Aidon](https://tekniskaverken.se/privat/elnat/kunskap/elmatare-elforbrukning) / Tekniska Verken
 * [Kamstrup Omnia](https://www.goteborgenergi.se/kundservice/elmatarbyte/sa-fungerar-din-elmatare) / Göteborgs Energi
 
 > [!NOTE]
@@ -277,8 +277,7 @@ p1reader:
 
 - Specification overview: https://www.tekniskaverken.se/siteassets/tekniska-verken/elnat/elmatare-och-elanvandning/aidon-rj12-han-interface-v17a.pdf
 - OBIS codes: https://tech.enectiva.cz/en/installation-instructions/others/obis-codes-meaning/
-- P1 hardware info (in Dutch): http://domoticx.com/p1-poort-slimme-meter-hardware/
-- Original Dutch specification (P1 Companion Standard – DSMR 5.0.2): https://www.netbeheernederland.nl/_upload/Files/Slimme_meter_15_a727fce1f1.pdf
+- Original Dutch specification (P1 Companion Standard – DSMR 5.0.2): https://www.netbeheernederland.nl/sites/default/files/2024-02/dsmr_5.0.2_p1_companion_standard.pdf
 - Luxembourg specification (E-Meter P1 Specification 1.1.2): https://www.luxmetering.lu/pdf/SPEC%20-%20E-Meter_P1_specification_20210308.pdf
 - Belgian specification: https://www.fluvius.be/sites/fluvius/files/2020-03/1901-fluvius-technical-specification-user-ports-digital-meter.pdf and https://www.fluvius.be/sites/fluvius/files/2019-12/e-mucs_h_ed_1_3.pdf
 - Swedish specification (Branschrekommendation för lokalt kundgränssnitt för elmätare 2.0): https://www.energiforetagen.se/globalassets/energiforetagen/det-erbjuder-vi/kurser-och-konferenser/elnat/branschrekommendation-lokalt-granssnitt-v2_0-201912.pdf
