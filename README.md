@@ -5,7 +5,7 @@ An [ESPHome](https://esphome.io/) external component for reading P1 data from sm
 It handles both the **ASCII** telegram format (most meters) and the binary **HDLC** format (used by some Aidon meters).
 
 > [!NOTE]
-> This is now an ESPHome **External Component** (the old Custom Components API was removed from ESPHome). The current `main` is tested with ESPHome `2026.6.4` — make sure your ESPHome is up to date if you run into compile problems.
+> This is now an ESPHome **External Component** (the old Custom Components API was removed from ESPHome). The current `main` is tested with ESPHome `2026.6.4`. Make sure your ESPHome is up to date if you run into compile problems.
 
 ## Contents
 
@@ -35,11 +35,11 @@ The following meter / supplier combinations have been verified to work:
 > There's a bug in older Landis+Gyr E360 firmware causing it to stop sending out data after a while. See [this comment](https://github.com/psvanstrom/esphome-p1reader/issues/4#issuecomment-810794020) for more info.
 
 > [!WARNING]
-> Do not confuse the KAIFA MA304H4**E** with the MA304H4**D** — the latter uses M-Bus instead of P1. Apart from being incompatible protocols, M-Bus pin 1 carries 27V instead of 5V and will fry your P1 equipment.
+> Do not confuse the KAIFA MA304H4**E** with the MA304H4**D**; the latter uses M-Bus instead of P1. Apart from being incompatible protocols, M-Bus pin 1 carries 27V instead of 5V and will fry your P1 equipment.
 
 ## Hardware
 
-This project uses an ESP-12 based NodeMCU, but a cheaper Wemos D1 mini — or most other ESP-based controllers — will also work. The P1 port on the meter provides 5V at up to 250mA, which is enough to power the circuit directly from the P1 port.
+This project uses an ESP-12 based NodeMCU, but a cheaper Wemos D1 mini (or most other ESP-based controllers) will also work. The P1 port on the meter provides 5V at up to 250mA, which is enough to power the circuit directly from the P1 port.
 
 ### Parts
 
@@ -55,9 +55,9 @@ This project uses an ESP-12 based NodeMCU, but a cheaper Wemos D1 mini — or mo
 The circuit is very simple: the 5V TX output on the P1 connector is inverted and level-shifted to 3.3V by the transistor and connected to the UART0 RX pin on the microcontroller. The RTS (request to send) pin is pulled high so that data is sent continuously, and GND and 5V are taken from the P1 connector to power the microcontroller.
 
 > [!TIP]
-> **You no longer need the transistor just to invert the signal.** Since this component was first written, ESPHome added software signal inversion via `inverted: true` on the `rx_pin` (see the [UART documentation](https://esphome.io/components/uart/)). Because the P1 data line is open-collector, on many meters you can skip the inverting transistor entirely and instead add a pull-up resistor from RX to 3.3V and set `inverted: true` in the config — this is exactly the [ESP32 wiring](#esp32) shown below.
+> **You no longer need the transistor just to invert the signal.** Since this component was first written, ESPHome added software signal inversion via `inverted: true` on the `rx_pin` (see the [UART documentation](https://esphome.io/components/uart/)). Because the P1 data line is open-collector, on many meters you can skip the inverting transistor entirely and instead add a pull-up resistor from RX to 3.3V and set `inverted: true` in the config. This is exactly the [ESP32 wiring](#esp32) shown below.
 >
-> If you *do* build the transistor circuit below, leave `inverted: true` **off** — the hardware already inverts the signal, and enabling software inversion as well would cancel it out.
+> If you *do* build the transistor circuit below, leave `inverted: true` **off**, since the hardware already inverts the signal, and enabling software inversion as well would cancel it out.
 
 #### NodeMCU ESP-12
 ![Wiring Diagram](images/wiring.png)
@@ -73,14 +73,14 @@ The schematic shows a 2SC1815 NPN transistor (that's what was on hand); either t
 
 Community-made boards you can build on:
 
-- **[Naesstrom](https://github.com/Naesstrom)** — a PCB for the Wemos D1 mini with a 3D-printable enclosure. [PCB](https://oshwlab.com/Naesstrom/esphome-p1reader) · [enclosure](https://www.thingiverse.com/thing:4961372).
+- **[Naesstrom](https://github.com/Naesstrom)**: a PCB for the Wemos D1 mini with a 3D-printable enclosure. [PCB](https://oshwlab.com/Naesstrom/esphome-p1reader) · [enclosure](https://www.thingiverse.com/thing:4961372).
 
   <p float="left">
       <img src="https://user-images.githubusercontent.com/5547521/128576100-648cd2b7-d728-4d8b-90be-46f7498d8136.png" height="300" />
       <img src="https://user-images.githubusercontent.com/5547521/132759466-f92bf190-ebaa-401d-bb54-330df5ba3ae0.png" height="300" />
   </p>
 
-- **[EHjortberg](https://github.com/ehjortberg)** — a PCB based on an ESP07 module with a 3D-printable enclosure. [Details](https://github.com/ehjortberg/kicad-p1-port-thingie).
+- **[EHjortberg](https://github.com/ehjortberg)**: a PCB based on an ESP07 module with a 3D-printable enclosure. [Details](https://github.com/ehjortberg/kicad-p1-port-thingie).
 
   <p float="left">
     <img src="https://github.com/ehjortberg/kicad-p1-port-thingie/raw/master/images/p1-port-thingie-photo.jpg" width="400">
@@ -167,11 +167,11 @@ Check the logs with `esphome p1reader.yaml logs` (or use the ESPHome dashboard, 
 
 </details>
 
-The default log level is `INFO`, since logging affects performance. The last row of each telegram contains the CRC check — if you constantly get invalid CRCs, there is likely something wrong with the serial communication.
+The default log level is `INFO`, since logging affects performance. The last row of each telegram contains the CRC check. If you constantly get invalid CRCs, there is likely something wrong with the serial communication.
 
 ## Controlling the update frequency
 
-Sensor values are published **once per telegram received from the meter**, so the update rate is set by how often your meter sends data — typically every 1–10 seconds depending on the meter and its firmware. The component's polling interval is auto-tuned from the baud rate and `rx_buffer_size` purely so it can keep up with the incoming bytes; it is **not** a way to slow down updates (forcing it slower just causes buffer overflows and CRC errors).
+Sensor values are published **once per telegram received from the meter**, so the update rate is set by how often your meter sends data, typically every 1 to 10 seconds depending on the meter and its firmware. The component's polling interval is auto-tuned from the baud rate and `rx_buffer_size` purely so it can keep up with the incoming bytes; it is **not** a way to slow down updates (forcing it slower just causes buffer overflows and CRC errors).
 
 To reduce how often values reach Home Assistant, add a standard ESPHome [sensor filter](https://esphome.io/components/sensor/#sensor-filters) to the sensors you care about:
 
@@ -193,7 +193,7 @@ Use `throttle_average` for instantaneous values (power, current, voltage) and `t
 
 ## Running on other boards
 
-Because the underlying P1 specification is, for practical purposes, identical across most of Europe/EU (Norway being the exception), this component works with many kinds of ESPHome-capable hardware — both DIY and commercial. The trick is to combine that hardware with the code here, which handles the Swedish selection of data values. (ESPHome's built-in DSMR component follows the Dutch specification instead.) Finland and Denmark appear to use the same configuration as Sweden.
+Because the underlying P1 specification is, for practical purposes, identical across most of Europe/EU (Norway being the exception), this component works with many kinds of ESPHome-capable hardware, both DIY and commercial. The trick is to combine that hardware with the code here, which handles the Swedish selection of data values. (ESPHome's built-in DSMR component follows the Dutch specification instead.) Finland and Denmark appear to use the same configuration as Sweden.
 
 ### ESP32
 
@@ -271,14 +271,13 @@ p1reader:
 ```
 
 > [!WARNING]
-> This requires additional hardware and is **off by default**. The TX pin needs the same treatment as RX — the ESP's 3.3 V output must be **inverted and level-shifted to a 5 V open-collector signal** (a second transistor stage, mirroring the RX circuit); wiring TX directly to the second device will not work reliably. Make sure your `uart:` also defines a `tx_pin`. Note too that the P1 port's ~250 mA supply may not be enough to power both the ESP and a second device — the second device may need its own supply. The hardware side is your responsibility; the option only handles echoing the data stream.
+> This requires additional hardware and is **off by default**. The TX pin needs the same treatment as RX: the ESP's 3.3 V output must be **inverted and level-shifted to a 5 V open-collector signal** (a second transistor stage, mirroring the RX circuit); wiring TX directly to the second device will not work reliably. Make sure your `uart:` also defines a `tx_pin`. Note too that the P1 port's ~250 mA supply may not be enough to power both the ESP and a second device, so the second device may need its own supply. The hardware side is your responsibility; the option only handles echoing the data stream.
 
 ## Technical documentation
 
-- Specification overview: https://www.tekniskaverken.se/siteassets/tekniska-verken/elnat/elmatare-och-elanvandning/aidon-rj12-han-interface-v17a.pdf
+- Swedish specification (Branschrekommendation för lokalt kundgränssnitt för elmätare 2.0): https://www.energiforetagen.se/globalassets/energiforetagen/det-erbjuder-vi/kurser-och-konferenser/elnat/branschrekommendation-lokalt-granssnitt-v2_0-201912.pdf
 - OBIS codes: https://tech.enectiva.cz/en/installation-instructions/others/obis-codes-meaning/
 - Original Dutch specification (P1 Companion Standard – DSMR 5.0.2): https://www.netbeheernederland.nl/sites/default/files/2024-02/dsmr_5.0.2_p1_companion_standard.pdf
 - Luxembourg specification (E-Meter P1 Specification 1.1.2): https://www.luxmetering.lu/pdf/SPEC%20-%20E-Meter_P1_specification_20210308.pdf
 - Belgian specification: https://www.fluvius.be/sites/fluvius/files/2020-03/1901-fluvius-technical-specification-user-ports-digital-meter.pdf and https://www.fluvius.be/sites/fluvius/files/2019-12/e-mucs_h_ed_1_3.pdf
-- Swedish specification (Branschrekommendation för lokalt kundgränssnitt för elmätare 2.0): https://www.energiforetagen.se/globalassets/energiforetagen/det-erbjuder-vi/kurser-och-konferenser/elnat/branschrekommendation-lokalt-granssnitt-v2_0-201912.pdf
 - Lithuania uses the Dutch specification (in Lithuanian): https://ismaniejiskaitikliai.lt/dazniausiai-uzduodami-klausimai/1#c-8/t-74
